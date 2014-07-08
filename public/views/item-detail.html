@@ -1,0 +1,14 @@
+<h1>My Wiki : {{name}}</h1>
+<div class="panel panel-default" >
+	<div class="panel-footer clearfix">
+		<div class="pull-left">ID : {{_id}}</div>
+		<div class="pull-right">
+ 			<button ng-hide="editing" type="button" class="btn btn-primary" ng-click="editing=!editing">edit content</button> 
+			<button ng-show="editing" type="button" class="btn btn-default" ng-click="editing=!editing">cancel</button>
+			<button ng-show="editing" type="button" class="btn btn-warning" ng-click="editing=!editing;saveItem()">save</button> 
+			<button ng-hide="editing" type="button" class="btn btn-primary" ng-click="refreshItems()">refresh</button> 
+		</div>
+	</div>
+	<div ng-hide="editing" class="panel-body" ng-bind-html="content | wikify"></div>
+	<textarea ng-show="editing" class="form-control" style="border-style:none;background-color:#fcf8e3;padding:15px;" ng-model="content" rows="20" placeholder="enter Wiki text"></textarea>
+</div>
