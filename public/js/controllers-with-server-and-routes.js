@@ -12,41 +12,55 @@ var wikiControllers = angular.module('wikiControllers', ['ngSanitize'])
 		return '<p>' + output.replace(/\n{2}/g, '</p><p>') + '</p>';
 	};
 })
-// .config(function($locationProvider) {
-// 	$locationProvider.html5Mode(true);
-// })
-// configure factory for storage on server
 .factory('StorageService', function($http) {
 	return {
-		get: function(successMethod) {
+		get: function(successMethod, errorMethod) {
 			return $http.get('http://localhost:8080/items/').success(function(data, status) {
-				successMethod(data, status);
-			});
+					successMethod(data, status);
+				})
+				.error(function(status) {
+					errorMethod(status);
+				});
 		},
-		post: function(item, successMethod) {
+		post: function(item, successMethod, errorMethod) {
 			return $http.post('http://localhost:8080/items/', item).success(function(data, status) {
-				successMethod(data, status);
-			});
+					successMethod(data, status);
+				})
+				.error(function(status) {
+					errorMethod(status);
+				});
 		},
-		put: function(item, successMethod) {
+		put: function(item, successMethod, errorMethod) {
 			return $http.put('http://localhost:8080/items/' + item._id, item).success(function(data, status) {
-				successMethod(data, status);
-			});
+					successMethod(data, status);
+				})
+				.error(function(status) {
+					errorMethod(status);
+				});
 		},
-		delete: function(item, successMethod) {
+		delete: function(item, successMethod, errorMethod) {
 			return $http.delete('http://localhost:8080/items/' + item._id).success(function(data, status) {
-				successMethod(data, status);
-			});
+					successMethod(data, status);
+				})
+				.error(function(status) {
+					errorMethod(status);
+				});
 		}
 	};
 })
-.controller('ItemListCtrl', function ($scope, StorageService) {
+// .controller('ItemCtrl', function($scope) {
+// 	$rootScope.disconnected = false;
+// })
+.controller('ItemListCtrl', function ($scope, $rootScope, StorageService) {
 	// freshen local storage from server - will not overwrite items that have not yet been stored, i.e. additive only
 	$scope.refreshItems = function () {
 		StorageService.get(function(data, status) {
+			$rootScope.disconnected = false;
 			for (i = 0; i < data.length; i++) { 
-				localStorage['wiki_' + data[i].name] = data[i]._id + data[i].content;
+				localStorage['wiki_' + data[i].name] = data[i]._id + '_' + data[i].content;
 			}
+		}, function(status) { 
+			$rootScope.disconnected = true; 
 		});
 	};
 	// now add local storage items to scope
@@ -72,7 +86,7 @@ var wikiControllers = angular.module('wikiControllers', ['ngSanitize'])
 	// 	});
 	// };
 })
-.controller('ItemDetailCtrl', function ($scope, $routeParams, StorageService) {
+.controller('ItemDetailCtrl', function ($scope, $rootScope, $routeParams, StorageService) {
 	$scope.reloadItem = function () {
 		// set the page name from the URL fragment
 		$scope.name = $routeParams._id;
@@ -86,17 +100,32 @@ var wikiControllers = angular.module('wikiControllers', ['ngSanitize'])
 	};
 	// save the edited wiki content to the server, and if successful, update local storage
 	$scope.saveItem = function () {
+		// create an item to save and set properties
 		var item = {};
-		if ($scope._id) { item._id = $scope._id; }
 		item.name = $scope.name;
 		item.content = $scope.content;
-		if (item._id) {
+		if ($scope._id) {
+			// _id exists, so already saved on server, so PUT update
+			item._id = $scope._id;
+			// store locally, regardless of connection
+			localStorage['wiki_' + item.name] = item._id + '_' + item.content;
+			// now try and store remotely
 			StorageService.put(item, function(data, status) {
-				localStorage['wiki_' + item.name] = item._id + '_' + item.content;
+				$rootScope.disconnected = false;
+			}, function(status) { 
+				$rootScope.disconnected = true; 
 			});
 		} else {
+			// no _id assigned yet, so not yet saved, so POST new item
 			StorageService.post(item, function(data, status) {
+				$rootScope.disconnected = false;
+				// remote storage succeeded, store locally with remote _id
 				localStorage['wiki_' + item.name] = data._id + '_' + item.content;
+				$scope._id = data._id;
+			}, function(status) { 
+				$rootScope.disconnected = true; 
+				// remote storage failed, so store locally without _id
+				localStorage['wiki_' + item.name] = '_' + item.content;
 			});
 		}
 	};
