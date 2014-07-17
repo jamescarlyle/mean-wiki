@@ -3,7 +3,7 @@ var Schema       = mongoose.Schema;
 // item schema
 var ItemSchema   = new Schema({
 	name: String,
-	updated: { type: Date, default: Date.now },
+	serverUpdate: { type: Number },
 	content: String
 });
 // exports module for use in Node

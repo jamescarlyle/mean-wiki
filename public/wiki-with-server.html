@@ -1,29 +1,93 @@
 <!DOCTYPE html>
-<html ng-app="WikiModule">
+<html ng-app="wikiModule">
 <head>
 	<link rel="stylesheet" href="css/bootstrap.min.css" rel="stylesheet" media="screen">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body role="document">
-	<div class="container-fluid" ng-controller="WikiCtlr">
-		<h1>My Wiki : {{itemName}}</h1>
-		<div class="panel panel-default" >
-			<div class="panel-footer clearfix">
-				<div class="pull-left">ID : {{itemId}}</div>
-				<div class="pull-right">
-		 			<button ng-hide="editing" type="button" class="btn btn-primary" ng-click="editing=!editing">edit content</button> 
-					<button ng-show="editing" type="button" class="btn btn-default" ng-click="editing=!editing">cancel</button>
-					<button ng-show="editing" type="button" class="btn btn-warning" ng-click="editing=!editing;saveItem()">save</button> 
-					<button ng-hide="editing" type="button" class="btn btn-primary" ng-click="refreshItems()">refresh</button> 
-				</div>
+	<div class="container-fluid" ng-controller="ItemCtrl">
+		<div ng-view></div>
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<div><a href="#/items"><span class="glyphicon glyphicon-th-list" /></span> item list</a> | <a href="#/"><span class="glyphicon glyphicon-play" /></span> getting started</a></div>
 			</div>
- 			<div ng-hide="editing" class="panel-body" ng-bind-html="itemContent | wikify"></div>
-			<textarea ng-show="editing" class="form-control" style="border-style:none;background-color:#fcf8e3;padding:15px;" ng-model="itemContent" rows="20" placeholder="enter Wiki text"></textarea>
 		</div>
 	 </div>
 </body>
 <script src="lib/angular.min.js"></script>
 <script src="lib/angular-sanitize.min.js"></script>
 <script src="lib/angular-route.min.js"></script>
+<script src="lib/angular-resource.js"></script>
+<script src="js/app.js"></script>
+<script src="js/filters.js"></script>
+<script src="js/resources.js"></script>
+<script src="js/services.js"></script>
 <script src="js/controllers-with-server.js"></script>
+
+<script type="text/ng-template" id="getting-started.html">
+<h1><span class="glyphicon glyphicon-play" /></span> What is Mean Wiki?</h1>
+<div class="panel panel-primary">
+	<div class="panel-body">
+	<p class="lead">Mean Wiki allows you to create a set of personal Wiki pages that link to each other.</p>
+	<p>Mean Wiki pages are stored within your browser (using &quot;local storage&quot;), allowing you to work offline.</p>
+	<p>Mean Wiki pages are also stored on a remote server, but protected so that only you can see them. This means that you can access them from a different device, for example your phone or tablet. We&apos;re working hard to ensure that it&apos;s easy to synchronise changes with the copy of the pages on the server.</p>
+	<p class="lead">Start your Wiki by following these steps:</p>
+	<ol>
+		<li>Enter some text in the sandbox below.</li>
+		<li>Link to a new page that you wish to create by typing its names using 2 or more words joined together and with the first letter capitalised, like HomePage or ToDoList. This will automatically create a link.</li>
+		<li>If the new page hasn&apos;t yet been edited, a <span class="glyphicon glyphicon-flag"></span> flag will appear next to the name link.</li>
+		<li>Click on the link, navigate to the page, and enter some content using further name links if more pages are needed.</li>
+		<li>After you have finished editing the page, click on the Save button and the page will be saved locally and remotely.</li>
+	</ol>
+	<p class="lead">Sandbox</p>
+	<p><textarea class="form-control" style="border-style:none;background-color:#fcf8e3;padding:15px;" 
+	ng-model="sandbox" rows="3" placeholder="Start typing in the sandbox - try creating a first page by typing a name like HomePage and then clicking on the link in the preview area below"></textarea></p>
+	<p class="lead">Preview</p>
+	<p><div class="well" ng-bind-html="sandbox | wikify"></div>
+	<p>Mean Wiki was built using Mongo, Express, Angular.js and Node - hence the acronym that forms part of the name. &quot;Wiki&quot; means &quot;quick&quot; in Hawaiian and the Wiki goal is that it is quick to edit the web.</p>
+	</div>
+</div>
+</script>
+<script type="text/ng-template" id="item-list.html">
+<h1><span class="glyphicon glyphicon-th-list" /></span> Mean Wiki : Item List</h1>
+<div class="panel panel-default">
+	<div class="panel-heading clearfix">
+		<div class="pull-left">
+			<p>number of items : <span class="badge">{{localStorageItems.length}}</span></p>
+		</div>
+		<div class="pull-right">
+			<button type="button" class="btn btn-primary" ng-disabled="!online" ng-click="refreshItems()">refresh <span class="glyphicon glyphicon-refresh"/> </button> 
+		</div>
+	</div>
+	<div class="panel-body">
+		<p><input class="form-control" ng-model="searchTerm" placeholder="search for items" /></p>
+		<div ng-repeat="(key, value) in localStorageItems | filter: {key: searchTerm}">
+			<h2><span ng-class="'glyphicon glyphicon-' + getItemStatusByName(key).status"></span> <a href="#/items/{{key}}">{{key}}</a></h2>
+		</div>
+	</div>
+</div>
+</script>
+<script type="text/ng-template" id="item-detail.html">
+<h1>Mean Wiki : {{item.name}} <small class="pull-right"><span ng-class="'glyphicon glyphicon-' + getItemStatusByName(item.name).status"></span> {{getItemStatusByName(item.name).message}}</small>
+	
+</h1>
+<div ng-show="opStatus" ng-class="'alert alert-' + opStatus" role="alert">
+  	<strong>{{opStatus}}</strong> {{opMessage}}
+</div>
+<div class="panel panel-default" >
+	<div class="panel-heading clearfix">
+		<div class="pull-left">Saved remotely at {{item.serverUpdate | date:'dd MMM yyyy HH:mm'}}, and locally at {{item.clientUpdate | date:'dd MMM yyyy HH:mm'}}</div>
+		<div class="pull-right">
+			<button ng-hide="editing" ng-disabled="!online" class="btn btn-warning" ng-click="removeItem()">remove <span class="glyphicon glyphicon-remove"/> </button>
+			<button ng-hide="editing || !item._id" ng-disabled="!online" class="btn btn-primary" ng-click="loadItem()">reload <span class="glyphicon glyphicon-refresh"/> </button> 
+ 			<button ng-hide="editing" class="btn btn-primary" ng-click="editing=!editing">edit  <span class="glyphicon glyphicon-pencil"/> </button> 
+			<button ng-show="editing" type="button" class="btn btn-default" ng-click="editing=!editing">cancel</button>
+			<button ng-show="editing" type="button" class="btn btn-warning" ng-click="editing=!editing;saveItem()">save</button> 
+		</div>
+	</div>
+	<div ng-hide="editing" class="panel-body" ng-bind-html="item.content | wikify"></div>
+	<textarea ng-show="editing" class="form-control" style="border-style:none;background-color:#fcf8e3;padding:15px;" 
+	ng-model="item.content" rows="20" placeholder="start typing item text here"></textarea>
+</div>
+</script>
 </html>

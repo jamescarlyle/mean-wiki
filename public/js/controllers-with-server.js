@@ -1,86 +1,62 @@
-var WikiModule = angular.module('WikiModule', ['ngSanitize'])
-// filter to convert WikiWords to links
-.filter('wikify', function() {
-	return function(input) {
-		// parse for WikiWords
-		var output = (input || '').replace(/([A-Z][a-z]+){2,}/g, function(wikiWord) {
-			// add an icon for new items
-			return (!localStorage['wiki_' + wikiWord] ? '<span class="glyphicon glyphicon-flag"></span> ' : '') 
-				+ '<a ' + 'href="#' + wikiWord + '">' + wikiWord + '</a>';
+var wikiControllers = angular.module('wikiControllers', [])
+.controller('ItemCtrl', function($scope, LocalStorage) {
+	$scope.getItemStatusByName = function (name) {
+		var item = LocalStorage.retrieve(name);
+		if (item.serverUpdate > item.clientUpdate) {
+			return {status:'import', message:'the item needs to be refreshed locally'};
+		} else if (item.serverUpdate < item.clientUpdate) {
+			return {status:'export', message:'the item needs to be saved remotely'};
+		} else return {status:'saved', message:'the item is synchronised'}; ;
+	};
+})
+.controller('ItemListCtrl', function ($scope, $rootScope, Item, LocalStorage) {
+	// freshen local storage from server - will not overwrite items that have not yet been stored, i.e. additive only
+	$scope.refreshItems = function() {
+		var serverItems = Item.query(function() {
+			var localItem, remoteItem;
+			for (i = 0; i < serverItems.length; i++) {
+				// arange items for comparison
+				remoteItem = serverItems[i];
+				localItem = LocalStorage.retrieve(remoteItem.name);
+				// for the time being, simply update the remote update time on the local instance
+				localItem.serverUpdate = remoteItem.serverUpdate;
+				// if local = remote do nothing
+				// if local is behind remote, someone else has updated remote, store new remote so warning can be shown
+				// if local is ahead of remote, we have a local update not persisted
+				// if (remoteItem.serverUpdate > localItem.serverUpdate) {
+				// 	// updated elsewhere more recently - save remote update timestamp locally so warning can be displayed
+
+				// } else {
+				// 	// updated locally more recently - save 
+
+				// }
+				LocalStorage.store(localItem);
+			}
+		}, function() { 
 		});
-		// parse for paragraphs, and return
-		return '<p>' + output.replace(/\n{2}/g, '</p><p>') + '</p>';
 	};
-})
-.config(function($locationProvider) {
-	$locationProvider.html5Mode(true);
-})
-// configure factory for storage on server
-.factory('StorageService', function($http) {
-	return {
-		get: function(successMethod) {
-			return $http.get('http://localhost:8080/items/').success(function(data, status) {
-				successMethod(data, status);
-			});
-		},
-		post: function(item, successMethod) {
-			return $http.post('http://localhost:8080/items/', item).success(function(data, status) {
-				successMethod(data, status);
-			});
-		},
-		put: function(item, successMethod) {
-			return $http.put('http://localhost:8080/items/' + item._id, item).success(function(data, status) {
-				successMethod(data, status);
-			});
-		},
-		delete: function(item, successMethod) {
-			return $http.delete('http://localhost:8080/items/' + item._id).success(function(data, status) {
-				successMethod(data, status);
-			});
-		}
+	$scope.getItemByName = function (name) {
+		return LocalStorage.retrieve(name);
 	};
+	$scope.localStorageItems = localStorage;
 })
-.controller('WikiCtlr', function ($scope, $location, StorageService) {
-	// save the edited wiki content to the server, and if successful, update local storage
-	$scope.saveItem = function () {
-		var item = {};
-		if ($scope.itemId) { item._id = $scope.itemId; }
-		item.name = $scope.itemName;
-		item.content = $scope.itemContent;
-		if (item._id) {
-			StorageService.put(item, function(data, status) {
-				localStorage['wiki_' + item.name] = item._id + '_' + item.content;
-			});
-		} else {
-			StorageService.post(item, function(data, status) {
-				localStorage['wiki_' + item.name] = data._id + '_' + item.content;
-			});
-		}
-	};
-	// // freshen local storage from server
-	// $scope.refreshItems = function () {
-	// 	StorageService.get(function(data, status) {
-	// 		for (i = 0; i < data.length; i++) { 
-	// 			localStorage[data[i].name] = data[i].content;
-	// 		}
-	// 	});
-	// };
-	// // remove item from server
-	// $scope.removeItem = function(item) {
-	// 	StorageService.delete(item, function(data, status) {
-	// 		$scope.refreshItems();
-	// 	});
-	// };
-	$scope.$on('$locationChangeSuccess', function(event){
-		// set the page name from the URL fragment
-		$scope.itemName = $location.hash();
-		// fetch the page 
-		var storedContent = localStorage['wiki_' + $scope.itemName] || '';
-		var idx = storedContent.indexOf('_');
-		$scope.itemId = storedContent.slice(0, idx) || '';
-		$scope.itemContent = storedContent.slice(idx + 1);
+.controller('ItemDetailCtrl', function ($scope, $rootScope, $routeParams, RemoteStorage, LocalStorage) {
+	$scope.loadItem = function() {
+		// fetch the item content using the name from the URL fragment
+		$scope.item = LocalStorage.retrieve($routeParams.name);
 		// determine whether we should immediately go into edit mode, if the page does not exist
-		$scope.editing = !$scope.itemContent;
-	});
+		$scope.editing = !$scope.item.content;
+		// clear message
+		$rootScope.opStatus = '';
+	};
+	$scope.saveItem = function() {
+		// save the edited wiki content to the server, and if successful, update local storage
+		RemoteStorage.store($scope.item);
+	};
+	$scope.removeItem = function() {
+		// send a delete to the remote store
+		RemoteStorage.remove($scope.item);
+	}
+	$scope.loadItem();
 })
 ;

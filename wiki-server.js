@@ -19,35 +19,60 @@ app.all('/*', function(req, res, next) {
 
 
 itemRouter.route('/:id')
-	.get(function(req, res, next) {
-		console.log('http GET called with ' + req.url);
+	.options(function(req, res, next) {
+		res.send();
+	})
+	// for put, can't appy req.body to already-found item before saving, and update doesn't call back with updated item
+	.put(function(req, res, next) {
+			Item.findOneAndUpdate(req.params.id, req.body, function(err, item) {
+			if (err) {
+				res.send(err);
+			} else {
+				res.json(item);
+			}
+		});
+	})
+	// all others, get the item for subsequent method processing
+	.all(function(req, res, next) {
+		console.log('http ' + req.method + ' called with ' + req.url);
+		console.log('headers ' + JSON.stringify(req.headers));
 		Item.findById(req.params.id, function(err, item) {
 			if (err) {
 				res.send(err);
+			} else if (!item) {
+				res.send(404);
 			} else {
-				res.json(item);
+				req.item = item;
+				res.set({'Last-Modified': item.serverUpdate});
+				next();
 			}
 		});
 	})
-	.put(function(req, res, next) {
-		console.log('http PUT called with ' + JSON.stringify(req.body));
-		Item.findByIdAndUpdate(req.params.id, req.body, function(err, item) {
-			if (err) {
-				res.send(err);
-			} else {
-				res.json(item);
-			}
-		});
+	.get(function(req, res, next) {
+		if (req.item.serverUpdate > req.headers['if-modified-since']) {
+			res.json(req.item);
+		} else {
+			res.send(304);
+		}
+	})
+	.head(function(req, res, next) {
+		if (req.item.serverUpdate > req.headers['if-modified-since']) {
+			res.send();
+		} else {
+			res.send(304);
+		}
 	})
 	.delete(function(req, res, next) {
-		console.log('http DELETE called with ' + req.url);
-		Item.remove({ _id: req.params.id }, function(err, item) {
-			res.json(item);
+		req.item.remove(function(err, item) {
+			res.send();
 		});
 	})
 ;
 
 itemRouter.route('/')
+	.options(function(req, res, next) {
+		res.send();
+	})
 	.get(function(req, res, next) {
 		console.log('http GET called for all');
 		Item.find(function(err, items) {
