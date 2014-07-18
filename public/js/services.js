@@ -11,11 +11,14 @@ angular.module('wikiServices', [])
 			(resourceItem._id? resourceItem.$update() : resourceItem.$save())
 			.then(function() {
 				Message.success('Item was saved successfully');
+				// set the client update to be the same as that for the server, so the syncStatus shows synchronised
 				resourceItem.clientUpdate = resourceItem.serverUpdate;
 			})
 			.catch(function() { 
 				Message.failure('Item was not saved successfully - are you offline?');
+				// roll back the server update as update did not go through
 				resourceItem.serverUpdate = previousUpdate;
+				// and set the client update to now
 				resourceItem.clientUpdate = Date.now();
 			})
 			.finally(function() {

@@ -1,14 +1,4 @@
 var wikiControllers = angular.module('wikiControllers', [])
-.controller('ItemCtrl', function($scope, LocalStorage) {
-	$scope.getItemStatusByName = function (name) {
-		var item = LocalStorage.retrieve(name);
-		if (item.serverUpdate > item.clientUpdate) {
-			return {status:'import', message:'the item needs to be refreshed locally'};
-		} else if (item.serverUpdate < item.clientUpdate) {
-			return {status:'export', message:'the item needs to be saved remotely'};
-		} else return {status:'saved', message:'the item is synchronised'}; ;
-	};
-})
 .controller('ItemListCtrl', function ($scope, $rootScope, Item, LocalStorage) {
 	// freshen local storage from server - will not overwrite items that have not yet been stored, i.e. additive only
 	$scope.refreshItems = function() {
@@ -38,7 +28,13 @@ var wikiControllers = angular.module('wikiControllers', [])
 	$scope.getItemByName = function (name) {
 		return LocalStorage.retrieve(name);
 	};
-	$scope.localStorageItems = localStorage;
+	// $scope.localStorageItems = [];
+	$scope.items = [];
+	var item = {};
+	for (i = 0; i < localStorage.length; i++) {
+		item = LocalStorage.retrieve(localStorage.key(i));
+		$scope.items.push({name: item.name, syncStatus: getSyncStatus(item)});
+	}
 })
 .controller('ItemDetailCtrl', function ($scope, $rootScope, $routeParams, RemoteStorage, LocalStorage) {
 	$scope.loadItem = function() {
@@ -46,12 +42,17 @@ var wikiControllers = angular.module('wikiControllers', [])
 		$scope.item = LocalStorage.retrieve($routeParams.name);
 		// determine whether we should immediately go into edit mode, if the page does not exist
 		$scope.editing = !$scope.item.content;
+		// get the status of item
+		$scope.syncStatus = getSyncStatus($scope.item);
 		// clear message
 		$rootScope.opStatus = '';
 	};
 	$scope.saveItem = function() {
 		// save the edited wiki content to the server, and if successful, update local storage
 		RemoteStorage.store($scope.item);
+		// update the status of item 
+		// TODO - this has a bug - should be calculated as the call back .then from the store call, as otherwise will be calculated before the local/server update times have been set
+		$scope.syncStatus = getSyncStatus($scope.item);
 	};
 	$scope.removeItem = function() {
 		// send a delete to the remote store
@@ -60,3 +61,12 @@ var wikiControllers = angular.module('wikiControllers', [])
 	$scope.loadItem();
 })
 ;
+var getSyncStatus = function (item) {
+	if (!item.clientUpdate) {
+		return {status:'flash', message:'not saved'};
+	} else if (item.serverUpdate > item.clientUpdate) {
+		return {status:'save', message:'needs to be refreshed locally'};
+	} else if (item.serverUpdate < item.clientUpdate) {
+		return {status:'open', message:'needs to be saved remotely'};
+	} else return {status:'saved', message:'synchronised'}; ;
+};

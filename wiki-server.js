@@ -24,7 +24,11 @@ itemRouter.route('/:id')
 	})
 	// for put, can't appy req.body to already-found item before saving, and update doesn't call back with updated item
 	.put(function(req, res, next) {
-			Item.findOneAndUpdate(req.params.id, req.body, function(err, item) {
+		console.log('http ' + req.method + ' called with ' + req.url);
+		console.log('headers ' + JSON.stringify(req.headers));
+		console.log('body ' + JSON.stringify(req.body));
+		console.log('id' + req.params.id);
+			Item.findOneAndUpdate({ _id : req.params.id}, req.body, function(err, item) {
 			if (err) {
 				res.send(err);
 			} else {
