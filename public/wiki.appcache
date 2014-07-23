@@ -1,0 +1,17 @@
+CACHE MANIFEST
+wiki-with-server.html
+css/bootstrap.min.css
+fonts/glyphicons-halflings-regular.woff
+lib/angular.min.js
+lib/angular-sanitize.min.js
+lib/angular-route.min.js
+lib/angular-resource.min.js
+js/app.js
+js/filters.js
+js/resources.js
+js/services.js
+js/comparison.js
+js/controllers-with-server.js
+views/getting-started.html
+views/item-list.html
+views/item-detail.html

@@ -1,14 +1,27 @@
-<h1>My Wiki : {{name}}</h1>
+<!-- single item -->
+<h1>
+	Mean Wiki : {{item.name}} 
+	<small class="pull-right">
+			<span ng-class="'glyphicon glyphicon-' + item.getSyncStatus().status"></span> {{item.getSyncStatus().message}}
+	</small>
+</h1>
+<div ng-show="opStatus" ng-class="'alert alert-' + opStatus" role="alert">
+  	<strong>{{opStatus}}</strong> {{opMessage}}
+</div>
 <div class="panel panel-default" >
-	<div class="panel-footer clearfix">
-		<div class="pull-left">ID : {{_id}}</div>
+	<div class="panel-heading clearfix">
+		<div ng-show="item.clientUpdate" class="pull-left">Saved at {{item.clientUpdate | date:'dd MMM yyyy HH:mm'}}</div>
+		<div ng-show="item.serverUpdate && item.serverUpdate != item.clientUpdate" class="pull-left">, remotely at {{item.serverUpdate | date:'dd MMM yyyy HH:mm'}}</div>
 		<div class="pull-right">
- 			<button ng-hide="editing" type="button" class="btn btn-primary" ng-click="editing=!editing">edit content</button> 
+			<button ng-show="editing" ng-disabled="!online || !item._id" class="btn btn-danger" ng-click="editing=!editing;removeItem()">remove <span class="glyphicon glyphicon-remove"/> </button>
 			<button ng-show="editing" type="button" class="btn btn-default" ng-click="editing=!editing">cancel</button>
 			<button ng-show="editing" type="button" class="btn btn-warning" ng-click="editing=!editing;saveItem()">save</button> 
-			<button ng-hide="editing" type="button" class="btn btn-primary" ng-click="refreshItems()">refresh</button> 
+			<button ng-hide="editing || !item._id" ng-disabled="!online || item.getSyncStatus().status != 'save'" class="btn btn-primary" ng-click="compareItem()">reload <span class="glyphicon glyphicon-refresh"/> </button> 
+ 			<button ng-hide="editing" class="btn btn-primary" ng-click="editing=!editing">edit  <span class="glyphicon glyphicon-pencil"/> </button> 
 		</div>
 	</div>
-	<div ng-hide="editing" class="panel-body" ng-bind-html="content | wikify"></div>
-	<textarea ng-show="editing" class="form-control" style="border-style:none;background-color:#fcf8e3;padding:15px;" ng-model="content" rows="20" placeholder="enter Wiki text"></textarea>
+	<div ng-hide="editing" class="panel-body" ng-bind-html="item.content | wikify"></div>
+	<div ng-show="editing && comparison" class="panel-body" ng-bind-html="comparison"></div>
+	<textarea ng-show="editing" class="form-control" style="border-style:none;background-color:#fcf8e3;padding:15px;" 
+	ng-model="item.content" rows="20" placeholder="start typing item text here"></textarea>
 </div>

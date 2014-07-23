@@ -3,21 +3,23 @@ var wikiModule = angular.module('wikiModule', [
 	'wikiControllers',
 	'wikiFilters',
 	'wikiResources',
-	'wikiServices'
+	'wikiServices',
+	'comparison',
+	'config'
 ])
 // configure routes
 .config(['$routeProvider', function($routeProvider) {
 	$routeProvider.
 	when('/items/:name', {
-		templateUrl: 'item-detail.html',
+		templateUrl: 'views/item-detail.html',
 		controller: 'ItemDetailCtrl'
 	}).
 	when('/items', {
-		templateUrl: 'item-list.html',
+		templateUrl: 'views/item-list.html',
 		controller: 'ItemListCtrl'
 	}).
 	when('/', {
-		templateUrl: 'getting-started.html'
+		templateUrl: 'views/getting-started.html'
 	}).
 	otherwise({
 		redirectTo: '/items'
@@ -38,15 +40,15 @@ var wikiModule = angular.module('wikiModule', [
 })
 .run(function($window, $rootScope) {
 	$rootScope.online = navigator.onLine;
-	$window.addEventListener("offline", function () {
+	$window.addEventListener('offline', function () {
 		$rootScope.$apply(function() {
 			$rootScope.online = false;
 		});
-	}, false);
-	$window.addEventListener("online", function () {
+	});
+	$window.addEventListener('online', function () {
 		$rootScope.$apply(function() {
 			$rootScope.online = true;
 		});
-	}, false);
+	});
 })
 ;

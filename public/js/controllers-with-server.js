@@ -1,72 +1,76 @@
 var wikiControllers = angular.module('wikiControllers', [])
-.controller('ItemListCtrl', function ($scope, $rootScope, Item, LocalStorage) {
+.controller('ItemListCtrl', function ($scope, $rootScope, Configuration, RemoteStorage, LocalStorage) {
 	// freshen local storage from server - will not overwrite items that have not yet been stored, i.e. additive only
 	$scope.refreshItems = function() {
-		var serverItems = Item.query(function() {
+		var lastCheck = Configuration.getModifiedSince();
+		// this is set before the fetch, because otherwise there is a small gap between the fetch and now that will not be picked up next time
+		Configuration.setModifiedSince(Date.now());
+		RemoteStorage.retrieveModifiedSince(lastCheck).$promise.then(function(serverItems) {
 			var localItem, remoteItem;
 			for (i = 0; i < serverItems.length; i++) {
 				// arange items for comparison
 				remoteItem = serverItems[i];
 				localItem = LocalStorage.retrieve(remoteItem.name);
-				// for the time being, simply update the remote update time on the local instance
-				localItem.serverUpdate = remoteItem.serverUpdate;
-				// if local = remote do nothing
-				// if local is behind remote, someone else has updated remote, store new remote so warning can be shown
-				// if local is ahead of remote, we have a local update not persisted
-				// if (remoteItem.serverUpdate > localItem.serverUpdate) {
-				// 	// updated elsewhere more recently - save remote update timestamp locally so warning can be displayed
-
-				// } else {
-				// 	// updated locally more recently - save 
-
-				// }
-				LocalStorage.store(localItem);
+				// if local remote is same as remote, and local is ahead of remote, we have a local update not persisted
+				if (localItem.serverUpdate == remoteItem.serverUpdate && localItem.clientUpdate > localItem.serverUpdate) {
+					// signal recent local save, will trigger remote save
+					$rootScope.$emit('localStorageStored', localItem);
+				} else if (localItem.serverUpdate != remoteItem.serverUpdate) {
+					// for the time being, simply update the remote update time on the local instance
+					localItem.serverUpdate = remoteItem.serverUpdate;
+					// and store locally
+					LocalStorage.store(localItem, false);
+				}
 			}
-		}, function() { 
 		});
 	};
 	$scope.getItemByName = function (name) {
 		return LocalStorage.retrieve(name);
 	};
-	// $scope.localStorageItems = [];
+	// set up initial list of items
 	$scope.items = [];
 	var item = {};
 	for (i = 0; i < localStorage.length; i++) {
-		item = LocalStorage.retrieve(localStorage.key(i));
-		$scope.items.push({name: item.name, syncStatus: getSyncStatus(item)});
+		var key = localStorage.key(i);
+		if (key.match(/([A-Z][a-z]+){2,}/)) {
+			item = LocalStorage.retrieve(key);
+			$scope.items.push({name: item.name, syncStatus: item.getSyncStatus()});
+		}
 	}
 })
-.controller('ItemDetailCtrl', function ($scope, $rootScope, $routeParams, RemoteStorage, LocalStorage) {
+.controller('ItemDetailCtrl', function ($scope, $rootScope, $routeParams, $location, LocalStorage, RemoteStorage, Comparison) {
 	$scope.loadItem = function() {
 		// fetch the item content using the name from the URL fragment
 		$scope.item = LocalStorage.retrieve($routeParams.name);
 		// determine whether we should immediately go into edit mode, if the page does not exist
 		$scope.editing = !$scope.item.content;
-		// get the status of item
-		$scope.syncStatus = getSyncStatus($scope.item);
 		// clear message
 		$rootScope.opStatus = '';
 	};
 	$scope.saveItem = function() {
-		// save the edited wiki content to the server, and if successful, update local storage
-		RemoteStorage.store($scope.item);
-		// update the status of item 
-		// TODO - this has a bug - should be calculated as the call back .then from the store call, as otherwise will be calculated before the local/server update times have been set
-		$scope.syncStatus = getSyncStatus($scope.item);
+		// set the client update to now
+		$scope.item.clientUpdate = Date.now();
+		// save the edited wiki content to the local storage, raise event for remote storage to listen to
+		LocalStorage.store($scope.item, true);
 	};
 	$scope.removeItem = function() {
-		// send a delete to the remote store
-		RemoteStorage.remove($scope.item);
+       if (confirm('do you want to delete this item?') == true) {
+        	// send a delete to the remote store, raise event for remote storage to listen to
+			LocalStorage.remove($scope.item, true);
+			// redirect to the list page
+			$location.path('/items');
+		}
+	};
+	$scope.compareItem = function() {
+		// fetch the item content using the name from the URL fragment
+		$scope.item = LocalStorage.retrieve($routeParams.name);
+		// fetch remote item
+		RemoteStorage.retrieveOne($scope.item._id).$promise.then(function(item) {
+			$scope.remoteItem = item;
+			$scope.comparison = Comparison.compare($scope.item, $scope.remoteItem);
+		});
+		$scope.editing = true;
 	}
 	$scope.loadItem();
 })
 ;
-var getSyncStatus = function (item) {
-	if (!item.clientUpdate) {
-		return {status:'flash', message:'not saved'};
-	} else if (item.serverUpdate > item.clientUpdate) {
-		return {status:'save', message:'needs to be refreshed locally'};
-	} else if (item.serverUpdate < item.clientUpdate) {
-		return {status:'open', message:'needs to be saved remotely'};
-	} else return {status:'saved', message:'synchronised'}; ;
-};

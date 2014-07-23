@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.all('/*', function(req, res, next) {
 	res.header('Access-Control-Allow-Origin', '*');
 	res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, If-Modified-Since');
 	next();
 });
 
@@ -53,14 +53,16 @@ itemRouter.route('/:id')
 		});
 	})
 	.get(function(req, res, next) {
-		if (req.item.serverUpdate > req.headers['if-modified-since']) {
+		// return item if no if-modified-since header, or item has been modified since
+		if (!req.headers['if-modified-since'] || req.item.serverUpdate > req.headers['if-modified-since']) {
+			console.log('returning item ' + req.item.name);
 			res.json(req.item);
 		} else {
 			res.send(304);
 		}
 	})
 	.head(function(req, res, next) {
-		if (req.item.serverUpdate > req.headers['if-modified-since']) {
+		if (!req.headers['if-modified-since'] || req.item.serverUpdate > req.headers['if-modified-since']) {
 			res.send();
 		} else {
 			res.send(304);
@@ -78,8 +80,9 @@ itemRouter.route('/')
 		res.send();
 	})
 	.get(function(req, res, next) {
-		console.log('http GET called for all');
-		Item.find(function(err, items) {
+		console.log('http GET called for all modified since ' + req.headers['if-modified-since']);
+		console.log('headers ' + JSON.stringify(req.headers));
+		Item.find((req.headers['if-modified-since'] ? {'serverUpdate': {'$gt': req.headers['if-modified-since']} }: {}), function(err, items) {
 			if (err) {
 				res.send(err);
 			} else {

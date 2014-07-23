@@ -1,15 +1,24 @@
-<div class="panel panel-primary">
-	<div class="panel-footer clearfix">
-		<div class="pull-left">Current items : {{items.length}}</div>
+<!-- list of items -->
+<h1><span class="glyphicon glyphicon-th-list" /></span> Mean Wiki : Item List</h1>
+<div class="panel panel-default">
+	<div class="panel-heading clearfix">
+		<div class="pull-left">
+			<p>number of items : <span class="badge">{{items.length}}</span></p>
+		</div>
 		<div class="pull-right">
-			<button type="button" class="btn btn-primary" ng-click="refreshItems()">refresh</button> 
+			<button type="button" class="btn btn-primary" ng-disabled="!online" ng-click="refreshItems()">refresh <span class="glyphicon glyphicon-refresh"/> </button> 
 		</div>
 	</div>
 	<div class="panel-body">
-		<div class="row" ng-repeat="item in items">
-			<div class="col-md-2">{{(item._id || 'Not stored')}}</div>
-			<div class="col-md-9">{{item.name}}</div>
-			<div class="col-md-1"><p><button ng-click="removeItem(item)" class="btn-xs btn-warning">Remove</button></p></div>
+		<p><input class="form-control" ng-model="searchTerm" placeholder="search for items" /></p>
+		<!-- TODO fileter for item.name only -->
+		<div ng-repeat="item in items | filter:searchTerm">
+			<h2>
+				<a href="#/items/{{item.name}}">{{item.name}}</a>
+				<small class="pull-right">
+					{{item.syncStatus.message}} <span ng-class="'glyphicon glyphicon-' + item.syncStatus.status"></span>
+				</small>
+			</h2>
 		</div>
 	</div>
 </div>
