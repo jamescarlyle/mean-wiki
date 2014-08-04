@@ -1,14 +1,15 @@
 var WikiModule = angular.module('WikiModule', ['ngSanitize'])
 .filter('wikify', function() {
 	return function(input) {
-		// parse for WikiWords
-		var output = (input || '').replace(/([A-Z][a-z]+){2,}/g, function(wikiWord) {
+		// parse for captures - was /([A-Z][a-z]+){2,}/g
+		var output = (input || '').replace(/#(\w+)/g, function(match, capture) {
 			// add an icon for new items
-			return (!localStorage['wiki_' + wikiWord] ? '<span class="glyphicon glyphicon-flag"></span> ' : '') 
-				+ '<a ' + 'href="#' + wikiWord + '">' + wikiWord + '</a>';
+			return (!localStorage['wiki_' + capture] ? '<span class="glyphicon glyphicon-flag"></span> ' : '') 
+				+ '<a ' + 'href="#' + capture + '">#' + capture + '</a>';
+				// + '<a ' + 'href="#' + capture + '">' + capture + '</a>';
 		});
 		// parse for paragraphs, and return
-		return '<p>' + output.replace(/\n{2}/g, '</p><p>') + '</p>';
+		return '<p>' + output.replace(/\n/g, '</p><p>') + '</p>';
 	};
 })
 .config(function($locationProvider) {
