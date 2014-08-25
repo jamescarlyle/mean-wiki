@@ -1,42 +1,33 @@
-var wikiModule = angular.module('wikiModule', [
+var app = angular.module('app', [
 	'ngRoute',
-	'wikiControllers',
-	'wikiFilters',
-	'wikiResources',
-	'wikiServices',
+	'config',
+	'userMessage',
+	'filters',
+	'resources',
+	'remoteStorage',
+	'localStorage',
 	'comparison',
-	'config'
+	'controllers'
 ])
 // configure routes
-.config(['$routeProvider', function($routeProvider) {
+.config(function($routeProvider, $locationProvider) {
 	$routeProvider.
-	when('/items/:name', {
-		templateUrl: 'views/item-detail.html',
+	when('/:schema/:name', {
+		templateUrl: function(params) { return '/views/' + params.schema + '-detail.html' },
 		controller: 'ItemDetailCtrl'
 	}).
-	when('/items', {
-		templateUrl: 'views/item-list.html',
+	when('/:schema/', {
+		templateUrl: function(params) { return '/views/' + params.schema + '-list.html' },
 		controller: 'ItemListCtrl'
 	}).
 	when('/', {
-		templateUrl: 'views/getting-started.html'
+		templateUrl: '/views/getting-started.html'
 	}).
 	otherwise({
-		redirectTo: '/items'
+		redirectTo: '/'
 	});
-}])
-// set up a generic error handler
-.factory("Message", function($rootScope){
-	return {
-		success: function(caughtMessage) {
-			$rootScope.opMessage = caughtMessage;
-			$rootScope.opStatus = 'success';
-		},
-		failure: function(caughtMessage) {
-			$rootScope.opMessage = caughtMessage;
-			$rootScope.opStatus = 'warning';
-		}
-	};
+	// use the HTML5 History API
+	// $locationProvider.html5Mode(true);
 })
 .run(function($window, $rootScope) {
 	$rootScope.online = navigator.onLine;

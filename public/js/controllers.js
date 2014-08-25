@@ -15,7 +15,7 @@ var WikiModule = angular.module('WikiModule', ['ngSanitize'])
 .config(function($locationProvider) {
 	$locationProvider.html5Mode(true);
 })
-.controller('WikiCtlr', function ($scope, $location) {
+.controller('WikiController', function ($scope, $location) {
 	$scope.savePage = function () {
 		// save the edited wiki content into the array of pages
 		localStorage['wiki_' + $scope.pageName] = $scope.wikiText;
