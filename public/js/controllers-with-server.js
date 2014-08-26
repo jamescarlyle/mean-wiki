@@ -71,6 +71,7 @@ var controllers = angular.module('controllers', ['localStorage', 'remoteStorage'
 		});
 		$scope.editing = true;
 	}
+	// TODO - can we get rid of this?
 	$scope.loadItem();
 })
 ;

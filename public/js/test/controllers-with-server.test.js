@@ -17,51 +17,44 @@ describe('controllers-with-server', function () {
 	itemMock.serverUpdate = 5678;
 	itemMock.content = 'hello world';
 
-	beforeEach(angular.mock.module('controllers'), function($provide) {
-		// all modules need to be loaded including the following before we call beforeEach
-		$provide.value('localStorage', localStorageMock);
-		// $provide.value('remoteStorage', remoteStorageMock);
-	});
-
+	beforeEach(angular.mock.module('controllers'));
 	beforeEach(angular.mock.inject(function($controller, _$rootScope_) {
 		$rootScope = _$rootScope_;
-		$rootScope.opStatus = 'oldStatus';
 		$scope = $rootScope.$new();
 		routeParamsMock = {schema: 'items', name:'todo'};
 		localStorageMock = {
-			retrieve: function() {return {_id:'123'}},
+			// this needs to be defined to return something - anything
+			retrieve: function() {return {}},
 			store: function() { }
 		};
-		remoteStorageMock = { };
-		locationMock = { };
-
 		ItemDetailCtrl = $controller('ItemDetailCtrl', {
-			$scope: $scope, $rootScope: $rootScope, $routeParams: routeParamsMock, $location: locationMock, LocalStorage: localStorageMock
+			$scope: $scope, $rootScope: $rootScope, $routeParams: routeParamsMock, $location: {}, LocalStorage: localStorageMock
 		});
 
 	}));
 
-	it('should load the module and controllers', function () {
+	it('should load the module and controllers', function() {
 		expect(controllers).toBeDefined();
 		expect(ItemDetailCtrl).toBeDefined();
 		expect($scope.loadItem).toBeDefined;
 	});
 
-	it('should load an item', function () {
+	it('should load an item', function() {
 		// NB don't just spy on methods and expect them to alter variables - need andCallThrough
 		spyOn($scope, 'loadItem').andCallThrough(); 
 		spyOn(localStorageMock, 'retrieve').andReturn(itemMock);
 		$scope.editing = true;
+		$rootScope.opStatus = 'oldStatus';
 		// used in spyOn, so needs to be called through
 		$scope.loadItem();
-		expect(localStorageMock.retrieve).toHaveBeenCalled();
+		expect(localStorageMock.retrieve).toHaveBeenCalledWith('items', 'todo');
 		expect($scope.loadItem).toHaveBeenCalled();
 		expect($scope.item._id).toBe('abcd1234');
 		expect($scope.editing).toBe(false);
 		expect($rootScope.opStatus).toBe('');
 	});
 
-	it('should save an item', function () {
+	it('should save an item', function() {
 		spyOn(localStorageMock, 'store').andCallThrough();
 		$scope.item = itemMock;
 		$scope.saveItem();

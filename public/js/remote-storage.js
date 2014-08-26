@@ -1,6 +1,6 @@
 angular.module('remoteStorage', ['resources'])
 // service for Items
-.service('RemoteStorage', function(Item, Message, $rootScope) {
+.service('RemoteStorage', ['Item', 'Message', '$rootScope', function(Item, Message, $rootScope) {
 	// the function is the constructor - return an map of function names and the function provided
 	var store = function(resourceItem, raiseEvent) {
 		// hold the previous updated timestamp, in case we need to revert to it in the event of failure
@@ -62,5 +62,5 @@ angular.module('remoteStorage', ['resources'])
 			remove(data, true);
 		}
 	});
-})
+}])
 ;

@@ -1,5 +1,5 @@
-angular.module('localStorage', ['remoteStorage', 'resources'])
-.service('LocalStorage', function(Item, RemoteStorage, $rootScope) {
+angular.module('localStorage', ['resources'])
+.service('LocalStorage', function(Item, $rootScope) {
 	// need to include RemoteStorage as a dependency, otherwise it won't get instantiated (not called directly except as event listener)
 	var store = function(resourceItem, raiseEvent) {
 		// serialise the passed object and store locally
