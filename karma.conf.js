@@ -42,7 +42,7 @@ module.exports = function(config) {
 			'js/test/remote-storage.test.js',
 			'js/test/resources.test.js',
 			//'js/test/controllers.test.js'
-			'js/test/controllers-with-server-alt.test.js'
+			'js/test/controllers-with-server.test.js'
 		],
 
 

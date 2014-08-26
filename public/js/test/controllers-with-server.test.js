@@ -4,9 +4,12 @@ describe('controllers-with-server', function () {
 	var ItemDetailCtrl;
 	var $scope;
 	var $rootScope;
-	var routeParamsMock;
-	var remoteStorageMock;
-	var localStorageMock;
+	var routeParamsMock = {schema: 'items', name:'todo'};
+	var localStorageMock = {
+		// this needs to be defined to return something - anything
+		retrieve: function() {return {}},
+		store: function() { }
+	};
 	var locationMock;
 	var itemMock = {};
 	itemMock.schema = 'items';
@@ -21,12 +24,6 @@ describe('controllers-with-server', function () {
 	beforeEach(angular.mock.inject(function($controller, _$rootScope_) {
 		$rootScope = _$rootScope_;
 		$scope = $rootScope.$new();
-		routeParamsMock = {schema: 'items', name:'todo'};
-		localStorageMock = {
-			// this needs to be defined to return something - anything
-			retrieve: function() {return {}},
-			store: function() { }
-		};
 		ItemDetailCtrl = $controller('ItemDetailCtrl', {
 			$scope: $scope, $rootScope: $rootScope, $routeParams: routeParamsMock, $location: {}, LocalStorage: localStorageMock
 		});
