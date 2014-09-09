@@ -1,9 +1,9 @@
 <!-- single item -->
+	<p class="pull-right">
+			<span ng-class="'glyphicon glyphicon-' + item.syncStatus.status"></span> {{item.syncStatus.message}}
+	</p>
 <h1>
-	Mean Wiki : {{item.schema}} : {{item.name}} 
-	<small class="pull-right">
-			<span ng-class="'glyphicon glyphicon-' + item.getSyncStatus().status"></span> {{item.getSyncStatus().message}}
-	</small>
+	Mean Wiki : <span>{{item.schema}}</span> : <span>{{item.name}}</span>
 </h1>
 <div ng-show="opStatus" ng-class="'alert alert-' + opStatus" role="alert">
   	<strong>{{opStatus}}</strong> {{opMessage}}
@@ -25,7 +25,6 @@
 	</div>
 	<div ng-hide="editing" class="panel-body" ng-bind-html="item.content | wikify"></div>
 	<div ng-show="editing && comparison" class="panel-body" ng-bind-html="comparison"></div>
-	<!-- TODO switch form depending on whether item or person -->
 	<textarea ng-show="editing" class="form-control" style="border-style:none;background-color:#fcf8e3;padding:15px;" 
 	ng-model="item.content" rows="20" placeholder="start typing item text here"></textarea>
 </div>

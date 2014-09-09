@@ -55,10 +55,10 @@ describe('resources module', function () {
 		expect(item._id).toEqual('53e68768894643369409fd7f');
 	});
 
-	it('define an item with a syncStatus property', function (done) {
+	it('should define an item with a syncStatus property', function (done) {
 		var item = new Item();
 		item.clientUpdate = null;
-		item.ser = null;
+		item.serverUpdate = null;
 		expect(item.syncStatus).toEqual({ status : 'flash', message : 'not saved' });
 		item.clientUpdate = 100;
 		item.serverUpdate = null;
@@ -75,6 +75,25 @@ describe('resources module', function () {
 		item.clientUpdate = null;
 		item.serverUpdate = 100;
 		expect(item.syncStatus).toEqual({ status : 'flash', message : 'not saved' });
+	});
+	
+	it('should define an item with a schema property', function (done) {
+		var item = new Item();
+		item.name = '#todo';
+		expect(item.schema).toEqual('items');
+		item.name = '@james';
+		expect(item.schema).toEqual('people');
+	});
+	
+	it('should define an item with a asString property', function (done) {
+		var item = new Item();
+		item._id = '54005ea7b9a5d362994ef0e4';
+		item.user = '53e56a9e4938931d944740a3';
+		item.clientUpdate = 1409819660049;
+		item.serverUpdate = 1409654248169;
+		item.content = 'To Do list';
+		item.name = '#todo';
+		expect(item.asString).toEqual('{"_id":"54005ea7b9a5d362994ef0e4","user":"53e56a9e4938931d944740a3","clientUpdate":1409819660049,"serverUpdate":1409654248169,"content":"To Do list"}');
 	});
 	
 });

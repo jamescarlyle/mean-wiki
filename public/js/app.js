@@ -10,7 +10,7 @@ var app = angular.module('app', [
 	'controllers'
 ])
 // configure routes
-.config(function($routeProvider, $locationProvider) {
+.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 	$routeProvider.
 	when('/:schema/:name', {
 		templateUrl: function(params) { return '/views/' + params.schema + '-detail.html' },
@@ -26,10 +26,9 @@ var app = angular.module('app', [
 	otherwise({
 		redirectTo: '/'
 	});
-	// use the HTML5 History API
-	// $locationProvider.html5Mode(true);
-})
-.run(function($window, $rootScope) {
+}])
+// need to include RemoteStorage as a dependency, otherwise it won't get instantiated (not called directly except as event listener)
+.run(['$window', '$rootScope', 'RemoteStorage', function($window, $rootScope, RemoteStorage) {
 	$rootScope.online = navigator.onLine;
 	$window.addEventListener('offline', function () {
 		$rootScope.$apply(function() {
@@ -41,5 +40,5 @@ var app = angular.module('app', [
 			$rootScope.online = true;
 		});
 	});
-})
+}])
 ;

@@ -1,5 +1,5 @@
 var controllers = angular.module('controllers', ['localStorage', 'remoteStorage', 'userMessage', 'comparison'])
-// .controller('ItemListCtrl', function ($scope, $rootScope, Configuration, RemoteStorage, LocalStorage) {
+.controller('ItemListCtrl', function ($scope, $rootScope, Configuration, RemoteStorage, LocalStorage) {
 	// freshen local storage from server - will not overwrite items that have not yet been stored, i.e. additive only
 	// $scope.refreshItems = function() {
 	// 	var lastCheck = Configuration.getModifiedSince();
@@ -28,16 +28,8 @@ var controllers = angular.module('controllers', ['localStorage', 'remoteStorage'
 	// 	return LocalStorage.retrieve(name);
 	// };
 	// set up initial list of items
-	// $scope.items = [];
-	// var item = {};
-	// for (i = 0; i < localStorage.length; i++) {
-	// 	var key = localStorage.key(i);
-	// 	if (key.match(/([#\@])(\w+)/)) {
-	// 		item = LocalStorage.retrieve(key);
-	// 		$scope.items.push({name: item.name, syncStatus: item.syncStatus()});
-	// 	}
-	// }
-// })
+	$scope.items = LocalStorage.retrieveAll();
+})
 .controller('ItemDetailCtrl', function ($scope, $rootScope, $routeParams, $location, LocalStorage, RemoteStorage, Comparison) {
 	$scope.loadItem = function() {
 		// fetch the item content using the name from the URL fragment

@@ -1,6 +1,6 @@
 angular.module('resources', ['ngResource'])
 // service for Items
-.factory('Item', function($http, $resource) { 
+.factory('Item', ['$http', '$resource', function($http, $resource) { 
 	var lastCheck = 0;
 	// use the _id of the object to pass as a query parameter in the appropriate placeholder, and parameterise the schema (without a default)
 	var Item = $resource('http://localhost:8080/wiki/users/53e56a9e4938931d944740a3/:schema/:_id', {schema: '@schema', _id:'@_id'}, {
@@ -33,10 +33,34 @@ angular.module('resources', ['ngResource'])
 			} else if (!this.serverUpdate || this.serverUpdate < this.clientUpdate) {
 				return {status:'open', message:'needs to be saved remotely'};
 			} else return {status:'saved', message:'synchronised'}; ;
+		}},
+		'asString': { get : function() {
+			if (this.schema == "items") {
+			return JSON.stringify({
+				_id: this._id, 
+				user: this.user,
+				clientUpdate: this.clientUpdate,
+				serverUpdate: this.serverUpdate,
+				content: this.content
+			});
+		} else {
+			return JSON.stringify({
+				_id: this._id, 
+				user: this.user,
+				clientUpdate: this.clientUpdate,
+				serverUpdate: this.serverUpdate,
+				emailAddress: this.emailAddress,
+				mobileTelephone: this.mobileTelephone,
+				homeAddress: this.homeAddress,
+				twitterHandle: this.twitterHandle,
+				facebook: this.facebook,
+				notes: this.notes
+			});
+		}
 		}}
 	});
 	return Item;
-})
+}])
 .config(['$resourceProvider', function($resourceProvider) {
 	$resourceProvider.defaults.stripTrailingSlashes = false;
 }])

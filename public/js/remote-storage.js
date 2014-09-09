@@ -15,9 +15,8 @@ angular.module('remoteStorage', ['resources'])
 			// TODO not posting this feels odd, but posting feels odd too : maybe just parse name (which is posted!) 
 			// resourceItem.schema = schema;
 			Message.success('Item was saved remotely');
-			// set client update to be same as server, so item shows as synchronised
-			// TODO not necessary since time set on client, not server 
-			// resourceItem.clientUpdate = resourceItem.serverUpdate;
+			// set client update to be same as server, so item shows as synchronised - this is not returned from server, so needs to be readded
+			resourceItem.clientUpdate = resourceItem.serverUpdate;
 			// raise an event for remote storage, so the remote time can be updated in local storage and syncStatus shows synchronised
 			if (raiseEvent == true) { 
 				$rootScope.$emit('remoteStorageStored', resourceItem); 

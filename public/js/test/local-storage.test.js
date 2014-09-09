@@ -3,13 +3,50 @@
 describe('localStorage', function () {
 	var LocalStorage;
 	var item = {};
-	item.schema = 'items';
 	item.name = '#todo';
 	item._id = 'abcd1234';
 	item.user = '1234abcd';
 	item.clientUpdate = 1234;
 	item.serverUpdate = 5678;
 	item.content = 'hello world';
+	Object.defineProperties(item, {
+		// determine schema from name: curly brackets define object with key/value properties, array specifies getter for key
+		'schema': { get : function() { return {'#':'items','@':'people'}[this.name.charAt(0)]; } },
+		// determine syncStatus property by server and client update
+		'syncStatus': { get : function() {
+			if (!this.clientUpdate) {
+				return {status:'flash', message:'not saved'};
+			} else if (this.serverUpdate && this.serverUpdate > this.clientUpdate) {
+				return {status:'save', message:'needs to be refreshed locally'};
+			} else if (!this.serverUpdate || this.serverUpdate < this.clientUpdate) {
+				return {status:'open', message:'needs to be saved remotely'};
+			} else return {status:'saved', message:'synchronised'}; ;
+		}},
+		'asString': { get : function() {
+			if (this.schema == "items") {
+			return JSON.stringify({
+				_id: this._id, 
+				user: this.user,
+				clientUpdate: this.clientUpdate,
+				serverUpdate: this.serverUpdate,
+				content: this.content
+			});
+		} else {
+			return JSON.stringify({
+				_id: this._id, 
+				user: this.user,
+				clientUpdate: this.clientUpdate,
+				serverUpdate: this.serverUpdate,
+				emailAddress: this.emailAddress,
+				mobileTelephone: this.mobileTelephone,
+				homeAddress: this.homeAddress,
+				twitterHandle: this.twitterHandle,
+				facebook: this.facebook,
+				notes: this.notes
+			});
+		}
+		}}
+	});
 
 	beforeEach(function() {
 		// TODO remove dependency of local storage on resources and remote storage
@@ -47,33 +84,48 @@ describe('localStorage', function () {
 	});
 
 	it('should update an item which already exists', function () {
-		localStorage['#todo'] = '{"_id":"abcd1234","user":"1234abcd"}';
-		expect(localStorage['#todo']).toBe('{"_id":"abcd1234","user":"1234abcd"}');
-		LocalStorage.store({name:'#todo', _id:'abcd1234', user:'zzzz'});
-		expect(localStorage['#todo']).toBe('{"_id":"abcd1234","user":"zzzz"}');
+		LocalStorage.store(item);
+		expect(localStorage['#todo']).toBe('{"_id":"abcd1234","user":"1234abcd","clientUpdate":1234,"serverUpdate":5678,"content":"hello world"}');
+		item.content = 'new content';
+		LocalStorage.store(item);
+		expect(localStorage['#todo']).toBe('{"_id":"abcd1234","user":"1234abcd","clientUpdate":1234,"serverUpdate":5678,"content":"new content"}');
 	});
 
 	it('should raise an event when signalled, and an item is stored', inject(function($rootScope) {
 		spyOn($rootScope, '$emit');
 		LocalStorage.store(item, true);
-		expect($rootScope.$emit).toHaveBeenCalledWith('localStorageStored', { schema : 'items', name : '#todo', _id : 'abcd1234', user : '1234abcd', clientUpdate : 1234, serverUpdate : 5678, content : 'hello world' });
+		expect($rootScope.$emit).toHaveBeenCalledWith('localStorageStored', item);
 	}));
 
-	it('should raise an event when signalled, and an item is stored', inject(function($rootScope) {
+	it('should not raise an event when explicit or not specified, and an item is stored', inject(function($rootScope) {
 		spyOn($rootScope, '$emit');
 		LocalStorage.store(item, false);
 		expect($rootScope.$emit).toNotHaveBeenCalled;
+		LocalStorage.store(item);
+		expect($rootScope.$emit).toNotHaveBeenCalled;
 	}));
 
-	it('should retrieve a value', function () {
-		
+	it('should retrieve an item', function () {
+		LocalStorage.store(item);
+		var testItem = LocalStorage.retrieve('items', 'todo');
+		expect(testItem.asString).toBe(item.asString);
 	});
 
-	it('should raise an event when it has stored a value', function () {
-		
+	it('should retrieve a list of names, schema, syncStatus for all items', function () {
+		LocalStorage.store(item);
+		var testItems = LocalStorage.retrieveAll();
+		expect(testItems.length).toBe(1);
+		var testItem = testItems[0];
+		expect(testItem.schema).toBe(item.schema);
+		expect(testItem.name).toBe(item.name.slice(1));
+		expect(testItem.syncStatus.status).toBe(item.syncStatus.status);
+		expect(testItem.syncStatus.message).toBe(item.syncStatus.message);
 	});
 
 	it('should remove an item stored', function () {
-		
+		LocalStorage.store(item);
+		LocalStorage.remove(item);
+		var retrievedItem = LocalStorage.retrieve('items', 'todo');
+		expect(JSON.stringify(retrievedItem)).toBe('{"name":"#todo"}');
 	});
 });

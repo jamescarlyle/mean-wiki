@@ -11,14 +11,15 @@
 	</div>
 	<div class="panel-body">
 		<p><input class="form-control" ng-model="searchTerm" placeholder="search for items" /></p>
-		<!-- TODO fileter for item.name only -->
+		<!-- TODO filter for item.name only -->
 		<div ng-repeat="item in items | filter:searchTerm">
 			<h2>
-				<a href="#/items/{{item.name}}">{{item.name}}</a>
-				<small class="pull-right">
-					{{item.syncStatus.message}} <span ng-class="'glyphicon glyphicon-' + item.syncStatus.status"></span>
-				</small>
+				<small><span ng-class="'glyphicon glyphicon-' + item.syncStatus.status"></span></small>
+				<a href="/items/{{item.name}}">{{item.name}}</a>
 			</h2>
+			<!-- <p class="pull-right">
+				{{item.syncStatus.message}}
+			</p> -->
 		</div>
 	</div>
 </div>

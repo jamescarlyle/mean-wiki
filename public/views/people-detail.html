@@ -2,7 +2,7 @@
 <h1>
 	Mean Wiki : {{item.schema}} : {{item.name}} 
 	<small class="pull-right">
-			<span ng-class="'glyphicon glyphicon-' + item.getSyncStatus().status"></span> {{item.getSyncStatus().message}}
+			<span ng-class="'glyphicon glyphicon-' + item.getSyncStatus().status"></span> {{item.syncStatus.message}}
 	</small>
 </h1>
 <div ng-show="opStatus" ng-class="'alert alert-' + opStatus" role="alert">
