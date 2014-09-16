@@ -24,6 +24,19 @@ describe('resources module', function () {
 		expect(item._id).toEqual('53e68768894643369409fd7f');
 	});
 
+	it('should issue a GET with if-modified-since headers with queryModifiedSince()', function () {
+		// we expect the If-Modified-Since header to be set before the call - note that null needed for data parameter
+		$httpBackend.when('GET', 
+			'http://localhost:8080/wiki/users/53e56a9e4938931d944740a3/items/', null,
+			function(headers) {return headers['If-Modified-Since'] == '1234';})
+		.respond([{'_id': '53e68768894643369409fd7f', 'user': '53e56a9e4938931d944740a3', 'name': '#todo', 'content': 'saved\n@james', 'serverUpdate': 1407813235732, '__v': 0}]);
+		var items = Item.queryModifiedSince('items', 1234);
+		$httpBackend.flush();
+		// need to add angular.equals() if comparing complete objects
+		expect(items.length).toEqual(1);
+		expect(items[0]._id).toEqual('53e68768894643369409fd7f');
+	});
+
 	it('should process a PUT with update()', function () {
 		var item = new Item();
 		// don't need to set 'schema' property, since read-only and derived from name

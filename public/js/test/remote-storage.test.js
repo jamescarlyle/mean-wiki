@@ -1,7 +1,7 @@
 'use strict';
 describe('remoteStorage', function () {
 
-	var RemoteStorage, Message, $q;
+	var RemoteStorage, Message, $q, Item;
 	var item = {};
 	item.schema = 'items';
 	item.name = '#todo';
@@ -12,6 +12,8 @@ describe('remoteStorage', function () {
 	item.content = 'hello world';
 
 	beforeEach(angular.mock.module('remoteStorage', function($provide) {
+		Item = jasmine.createSpyObj('Item', ['queryModifiedSince']);
+		$provide.value('Item', Item);
 		Message = jasmine.createSpyObj('Message', ['success', 'failure']);
 		$provide.value('Message', Message);
 	}));
@@ -219,6 +221,7 @@ describe('remoteStorage', function () {
 	});
 
 	it('should retrieve a list of items', function () {
-		// TODO
+		RemoteStorage.retrieveModifiedSince('items', 1234);
+		expect(Item.queryModifiedSince).toHaveBeenCalledWith('items', 1234);
 	});
 });

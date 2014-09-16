@@ -16,10 +16,9 @@ angular.module('resources', ['ngResource'])
 		}
 	});
 	// provide a query on the resource that allows all items since the last time the query was run to be fetched
-	// TODO is this in use?
-	Item.queryModifiedSince = function(modifiedSince) {
+	Item.queryModifiedSince = function(schema, modifiedSince) {
 		lastCheck = modifiedSince;
-		return Item.queryModified();
+		return Item.queryModified({schema: schema});
 	}
 	Object.defineProperties(Item.prototype, {
 		// determine schema from name: curly brackets define object with key/value properties, array specifies getter for key

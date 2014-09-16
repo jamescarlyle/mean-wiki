@@ -117,6 +117,7 @@ describe('localStorage', function () {
 		expect(testItems.length).toBe(1);
 		var testItem = testItems[0];
 		expect(testItem.schema).toBe(item.schema);
+		expect(testItem.symbol).toBe(item.name.charAt(0));
 		expect(testItem.name).toBe(item.name.slice(1));
 		expect(testItem.syncStatus.status).toBe(item.syncStatus.status);
 		expect(testItem.syncStatus.message).toBe(item.syncStatus.message);

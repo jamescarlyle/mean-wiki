@@ -130,7 +130,7 @@ itemRouter.route('/users/:user/:schema')
 
 itemRouter.route('/users/:id')
 	.get(function(req, res, next) {
-		console.log('http GET called for User' + req.params.id);
+		console.log('http GET called for User resource ' + req.params.id);
 		User.findById(req.params.id, function(err, user) {
 			if (err) {
 				res.send(err);

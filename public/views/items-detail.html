@@ -17,7 +17,7 @@
 			<button ng-show="editing" type="button" class="btn btn-default" ng-click="editing=!editing">cancel</button>
 			<button ng-show="editing" type="button" class="btn btn-warning" ng-click="editing=!editing;saveItem()">save</button>
 
-			<button ng-hide="editing || !item._id || item.getSyncStatus().status != 'save'" ng-disabled="!online" class="btn btn-primary" ng-click="compareItem()">reload <span class="glyphicon glyphicon-refresh"/> </button> 
+			<button ng-hide="editing || !item._id || item.syncStatus.status != 'save'" ng-disabled="!online" class="btn btn-primary" ng-click="compareItem()">reload <span class="glyphicon glyphicon-refresh"/> </button> 
  			
  			<button ng-hide="editing || item.getSyncStatus().status == 'save'" class="btn btn-primary" ng-click="editing=!editing">edit  <span class="glyphicon glyphicon-pencil"/> </button>
 

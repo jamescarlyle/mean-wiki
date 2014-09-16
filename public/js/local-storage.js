@@ -22,6 +22,7 @@ angular.module('localStorage', ['resources'])
 	this.retrieve = function(schema, itemName) {
 		// deserialises and returns an item object - populated or empty
 		var resourceItem = new Item();
+		// TODO replace this with map
 		resourceItem.name = (schema == 'items' ? '#' : '@') + itemName;
 		// resourceItem.schema = schema;
 		angular.extend(resourceItem, JSON.parse(localStorage[resourceItem.name] || '{}'));
@@ -37,7 +38,7 @@ angular.module('localStorage', ['resources'])
 			match = regExp.exec(key);
 			if (match) {
 				angular.extend(item, JSON.parse(localStorage[key] || '{}'));
-				items.push({schema: {'#':'items','@':'people'}[match[1]], name: match[2], syncStatus: item.syncStatus});
+				items.push({schema: {'#':'items','@':'people'}[match[1]], symbol: match[1], name: match[2], syncStatus: item.syncStatus});
 			}
 		}
 		return items;
