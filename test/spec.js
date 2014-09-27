@@ -2,7 +2,7 @@
 describe('Mean Wiki homepage', function() {
 
 	beforeEach(function() {
-		browser.get('http://localhost:8000/wiki-with-server.html#/items/test001');
+		browser.get('http://localhost:8000/index.html#/items/test001');
 	});
 
 	it('should have a title and a welcome message, and load content', function() {

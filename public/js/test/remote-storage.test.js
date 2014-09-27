@@ -221,7 +221,7 @@ describe('remoteStorage', function () {
 	});
 
 	it('should retrieve a list of items', function () {
-		RemoteStorage.retrieveModifiedSince('items', 1234);
-		expect(Item.queryModifiedSince).toHaveBeenCalledWith('items', 1234);
+		RemoteStorage.retrieveModifiedSince('abcd1234', 'items', 1234);
+		expect(Item.queryModifiedSince).toHaveBeenCalledWith('abcd1234', 'items', 1234);
 	});
 });

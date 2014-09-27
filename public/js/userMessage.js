@@ -6,10 +6,12 @@ angular.module('userMessage', [])
 		success: function(caughtMessage) {
 			$rootScope.opMessage = caughtMessage;
 			$rootScope.opStatus = 'success';
+			$rootScope.justSet = true;
 		},
 		failure: function(caughtMessage) {
 			$rootScope.opMessage = caughtMessage;
 			$rootScope.opStatus = 'warning';
+			$rootScope.justSet = true;
 		}
 	};
 }])

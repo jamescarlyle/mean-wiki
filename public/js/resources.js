@@ -1,9 +1,15 @@
 angular.module('resources', ['ngResource'])
 // service for Items
+.factory('User', ['$http', '$resource', function($http, $resource) { 
+	return $resource('http://localhost:8080/wiki/users/:_id', {_id:'@_id'}, {
+		update: { method: 'PUT' }
+	});
+}])
+// service for Items
 .factory('Item', ['$http', '$resource', function($http, $resource) { 
 	var lastCheck = 0;
 	// use the _id of the object to pass as a query parameter in the appropriate placeholder, and parameterise the schema (without a default)
-	var Item = $resource('http://localhost:8080/wiki/users/53e56a9e4938931d944740a3/:schema/:_id', {schema: '@schema', _id:'@_id'}, {
+	var Item = $resource('http://localhost:8080/wiki/users/:user/:schema/:_id', {user: '@user', schema: '@schema', _id:'@_id'}, {
 		update: { 
 			method: 'PUT' 
 		},
@@ -16,9 +22,9 @@ angular.module('resources', ['ngResource'])
 		}
 	});
 	// provide a query on the resource that allows all items since the last time the query was run to be fetched
-	Item.queryModifiedSince = function(schema, modifiedSince) {
+	Item.queryModifiedSince = function(user, schema, modifiedSince) {
 		lastCheck = modifiedSince;
-		return Item.queryModified({schema: schema});
+		return Item.queryModified({user: user, schema: schema});
 	}
 	Object.defineProperties(Item.prototype, {
 		// determine schema from name: curly brackets define object with key/value properties, array specifies getter for key

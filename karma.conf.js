@@ -28,11 +28,11 @@ module.exports = function(config) {
 			'js/userMessage.js',
 			'js/comparison.js',
 			'js/filters.js',
-			//'js/controllers.js'
 			'js/resources.js',
 			'js/local-storage.js',
 			'js/remote-storage.js',
-			'js/controllers-with-server.js',
+			'js/authenticate.js',
+			'js/controllers.js',
 			// test files
 			'js/test/app.test.js',
 			'js/test/config.test.js',
@@ -41,8 +41,8 @@ module.exports = function(config) {
 			'js/test/local-storage.test.js',
 			'js/test/remote-storage.test.js',
 			'js/test/resources.test.js',
-			//'js/test/controllers.test.js'
-			'js/test/controllers-with-server.test.js'
+			'js/test/authenticate.test.js',
+			'js/test/controllers.test.js'
 		],
 
 

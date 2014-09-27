@@ -1,12 +1,12 @@
 <!-- single item -->
-	<p class="pull-right">
-			<span ng-class="'glyphicon glyphicon-' + item.syncStatus.status"></span> {{item.syncStatus.message}}
-	</p>
+<p class="pull-right">
+	<span ng-class="'glyphicon glyphicon-' + item.syncStatus.status"></span> {{item.syncStatus.message}}
+</p>
 <h1>
 	Mean Wiki : <span>{{item.schema}}</span> : <span>{{item.name}}</span>
 </h1>
 <div ng-show="opStatus" ng-class="'alert alert-' + opStatus" role="alert">
-  	<strong>{{opStatus}}</strong> {{opMessage}}
+	<strong>{{opStatus}}</strong> {{opMessage}}
 </div>
 <div class="panel panel-default" >
 	<div class="panel-heading clearfix">

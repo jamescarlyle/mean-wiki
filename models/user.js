@@ -4,6 +4,7 @@ var Schema  = mongoose.Schema;
 var UserSchema   = new Schema({
 	name: String,
 	emailAddress: String,
+	passwordHash: String,
 	serverUpdate: { type: Date, default: Date.now }
 });
 

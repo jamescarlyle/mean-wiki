@@ -16,6 +16,10 @@ var app = angular.module('app', [
 		templateUrl: function(params) { return '/views/' + params.schema + '-detail.html' },
 		controller: 'ItemDetailCtrl'
 	}).
+	when('/authenticate/', {
+		templateUrl: '/views/authenticate.html',
+		controller: 'AuthenticateCtrl'
+	}).
 	when('/:schema/', {
 		templateUrl: function(params) { return '/views/' + params.schema + '-list.html' },
 		controller: 'ItemListCtrl'
@@ -27,6 +31,11 @@ var app = angular.module('app', [
 		redirectTo: '/'
 	});
 }])
+.controller('ApplicationCtrl', function($scope) {
+	$scope.setCurrentUser = function (user) {
+		$scope.currentUser = user;
+	};
+})
 // need to include RemoteStorage as a dependency, otherwise it won't get instantiated (not called directly except as event listener)
 .run(['$window', '$rootScope', 'RemoteStorage', function($window, $rootScope, RemoteStorage) {
 	$rootScope.online = navigator.onLine;
@@ -39,6 +48,15 @@ var app = angular.module('app', [
 		$rootScope.$apply(function() {
 			$rootScope.online = true;
 		});
+	});
+	$rootScope.$on('$locationChangeStart', function (event, next, current) {
+		// TODO this can't be controlled by locationChangeStart, as sometimes the message is displayed on a page where the location is not changing
+		if ($rootScope.justSet) {
+			$rootScope.justSet = false;
+		} else {
+			// clear message
+			$rootScope.opStatus = '';
+		}
 	});
 }])
 ;

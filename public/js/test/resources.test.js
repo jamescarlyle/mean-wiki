@@ -18,7 +18,7 @@ describe('resources module', function () {
 
 	it('should issue a GET with get()', function () {
 		$httpBackend.when('GET', 'http://localhost:8080/wiki/users/53e56a9e4938931d944740a3/items/53e68768894643369409fd7f').respond({'_id': '53e68768894643369409fd7f', 'user': '53e56a9e4938931d944740a3', 'name': '#todo', 'content': 'saved\n@james', 'serverUpdate': 1407813235732, '__v': 0});
-		var item = Item.get({schema: 'items', _id: '53e68768894643369409fd7f'});
+		var item = Item.get({user: '53e56a9e4938931d944740a3', schema: 'items', _id: '53e68768894643369409fd7f'});
 		$httpBackend.flush();
 		// need to add angular.equals() if comparing complete objects
 		expect(item._id).toEqual('53e68768894643369409fd7f');
@@ -30,7 +30,7 @@ describe('resources module', function () {
 			'http://localhost:8080/wiki/users/53e56a9e4938931d944740a3/items/', null,
 			function(headers) {return headers['If-Modified-Since'] == '1234';})
 		.respond([{'_id': '53e68768894643369409fd7f', 'user': '53e56a9e4938931d944740a3', 'name': '#todo', 'content': 'saved\n@james', 'serverUpdate': 1407813235732, '__v': 0}]);
-		var items = Item.queryModifiedSince('items', 1234);
+		var items = Item.queryModifiedSince('53e56a9e4938931d944740a3', 'items', 1234);
 		$httpBackend.flush();
 		// need to add angular.equals() if comparing complete objects
 		expect(items.length).toEqual(1);

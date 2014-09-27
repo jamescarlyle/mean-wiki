@@ -2,14 +2,16 @@
 
 describe('app module', function () {
 
-	var message;
+	var message, $rootScope, $location, ApplicationCtrl;
 
 	beforeEach(angular.mock.module('app'), function($provide) {
 		$provide.value('$window', {location:{href:'dummy'}});
 	});
 
-	beforeEach(inject(function(Message) {
+	beforeEach(inject(function(Message, _$rootScope_, _$location_) {
 		message = Message;
+		$rootScope = _$rootScope_;
+		$location = _$location_;
 	}));
 
 	// TODO refactor this to message.test.js
@@ -27,7 +29,7 @@ describe('app module', function () {
 
 	it('should route to the item detail if a schema and item name are provided', function () {
 		// we could also load the page this way: module('.public/views/items-detail.html'); preprocessors: {// '**/*.html': ['ng-html2js']},
-		inject(function($route, $location, $rootScope, $httpBackend) {
+		inject(function($route, $httpBackend) {
 			expect($route.current).toBeUndefined();
 			$httpBackend.expectGET('/views/items-detail.html').respond(200);
 			$location.path('/items/todo');
@@ -39,7 +41,7 @@ describe('app module', function () {
 	
 	it('should route to the item detail if a schema only is provided', function () {
 		// we could also load the page this way: module('.public/views/items-detail.html'); preprocessors: {// '**/*.html': ['ng-html2js']},
-		inject(function($route, $location, $rootScope, $httpBackend) {
+		inject(function($route, $httpBackend) {
 			expect($route.current).toBeUndefined();
 			$httpBackend.expectGET('/views/items-list.html').respond(200);
 			$location.path('/items');
@@ -50,7 +52,7 @@ describe('app module', function () {
 	});
 
 	it('should track online status', function () {
-		inject(function($window, $rootScope) {
+		inject(function($window) {
 			// spy on the $apply method of $rootScope - need to call through, otherwise the rootScope.online property won't be set
 			spyOn($rootScope, '$apply').andCallThrough();
 			// initial expectation
@@ -58,6 +60,7 @@ describe('app module', function () {
 			// set initial state
 			$rootScope.online = true;
 			var event = new Event('offline');
+			// TODO for some reason, if $route is injected before each, the dispatchEvent causes the default route (getting-started) to be expected
 			$window.dispatchEvent(event);
 			expect($rootScope.online).toBe(false);
 			// now check the spy
@@ -67,5 +70,28 @@ describe('app module', function () {
 			expect($rootScope.online).toBe(true);
 		})		
 	});
+
+	it('should set the currentUser', function () {
+		inject(function($controller) {
+			expect($rootScope.currentUser).toBeUndefined;
+			var $scope = $rootScope.$new();
+			ApplicationCtrl = $controller('ApplicationCtrl', {$scope: $scope});
+			var user = {_id: 'abcd1234'};
+			$scope.setCurrentUser(user);
+			expect($scope.currentUser).toBe(user);
+		});
+	});
 	
+	it('should listen for route changes', function () {
+		$rootScope.justSet = true;
+		$rootScope.opStatus = 'test message';
+		// change the route - message should show
+		$rootScope.$broadcast("$locationChangeStart");
+		expect($rootScope.justSet).toBe(false);
+		expect($rootScope.opStatus).toBe('test message');
+		// now change the route again - message should be gone
+		$rootScope.$broadcast("$locationChangeStart");
+		expect($rootScope.justSet).toBe(false);
+		expect($rootScope.opStatus).toBe('');
+	});
 });

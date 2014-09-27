@@ -41,13 +41,13 @@ angular.module('remoteStorage', ['resources'])
 	};
 	this.remove = remove;
 	// TODO - should RemoteStorage methods take Resources as parameter? Or _id?
-	this.retrieveOne = function(schema, _id) {
+	this.retrieveOne = function(user, schema, _id) {
 		// this returns a promise
-		return Item.get({schema: schema, _id: _id});
+		return Item.get({user: user, schema: schema, _id: _id});
 	};
-	this.retrieveModifiedSince = function(schema, modifiedSince) {
+	this.retrieveModifiedSince = function(user, schema, modifiedSince) {
 		// this returns a promise
-		return Item.queryModifiedSince(schema, modifiedSince);
+		return Item.queryModifiedSince(user, schema, modifiedSince);
 	};
 	$rootScope.$on('localStorageStored', function(event, data) {
 		// listen for local storage events and replicate remotely
