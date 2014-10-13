@@ -51,8 +51,8 @@ describe('controllers', function () {
 
 	it('should load an item', function() {
 		// NB don't just spy on methods and expect them to alter variables - need andCallThrough
-		spyOn($scope, 'loadItem').andCallThrough(); 
-		spyOn(localStorageMock, 'retrieve').andReturn(itemMock);
+		spyOn($scope, 'loadItem').and.callThrough(); 
+		spyOn(localStorageMock, 'retrieve').and.returnValue(itemMock);
 		$scope.editing = true;
 		// TODO test opStatus code 
 		// $rootScope.opStatus = 'oldStatus';
@@ -66,7 +66,7 @@ describe('controllers', function () {
 	});
 
 	it('should save an item', function() {
-		spyOn(localStorageMock, 'store').andCallThrough();
+		spyOn(localStorageMock, 'store').and.callThrough();
 		$scope.item = itemMock;
 		$scope.saveItem();
 		expect(localStorageMock.store).toHaveBeenCalledWith({ schema : 'items', name : '#todo', _id : 'abcd1234', user : '1234abcd', clientUpdate : itemMock.clientUpdate, serverUpdate : 5678, content : 'hello world' }, true);
@@ -74,9 +74,9 @@ describe('controllers', function () {
 
 	it('should refresh items where the remote item has been updated most recently', inject(function($q) {
 		var deferred = $q.defer();
-		spyOn(remoteStorageMock, 'retrieveModifiedSince').andReturn({$promise: deferred.promise});
+		spyOn(remoteStorageMock, 'retrieveModifiedSince').and.returnValue({$promise: deferred.promise});
 		// could build a more sophisticated localStorageMock, that returned one of a number of values
-		spyOn(localStorageMock, 'retrieve').andReturn({serverUpdate: 1234, clientUpdate: 5678});
+		spyOn(localStorageMock, 'retrieve').and.returnValue({serverUpdate: 1234, clientUpdate: 5678});
 		spyOn(localStorageMock, 'store');
 		spyOn($rootScope, '$emit');
 		// test 1 - server item more recently updated than client's recognition of server, so update serverUpdate value on client
@@ -89,9 +89,9 @@ describe('controllers', function () {
 
 	it('should refresh items where the local item has been refreshed most recently', inject(function($q) {
 		var deferred = $q.defer();
-		spyOn(remoteStorageMock, 'retrieveModifiedSince').andReturn({$promise: deferred.promise});
+		spyOn(remoteStorageMock, 'retrieveModifiedSince').and.returnValue({$promise: deferred.promise});
 		// could build a more sophisticated localStorageMock, that returned one of a number of values
-		spyOn(localStorageMock, 'retrieve').andReturn({serverUpdate: 1234, clientUpdate: 5678});
+		spyOn(localStorageMock, 'retrieve').and.returnValue({serverUpdate: 1234, clientUpdate: 5678});
 		spyOn($rootScope, '$emit');
 		// test 2 - client has correct view of server update, but client has been updated more recently offline
 		$scope.refreshItems();

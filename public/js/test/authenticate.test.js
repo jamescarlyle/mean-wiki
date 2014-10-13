@@ -1,7 +1,7 @@
 'use strict';
 describe('authenticate', function () {
 
-	var Authenticate, Message, $q, User;
+	var Authenticate, Message, $q, $rootScope, User;
 	var user = {};
 	user.name = 'james carlyle';
 	user._id = 'abcd1234';
@@ -18,36 +18,67 @@ describe('authenticate', function () {
 		$provide.value('Message', Message);
 	}));
 
-	beforeEach(inject(function(_$q_, _Authenticate_) {
-		Authenticate = _Authenticate_;
+	beforeEach(inject(function(_$rootScope_, _$q_, _Authenticate_) {
+		$rootScope = _$rootScope_;
 		$q = _$q_;
+		Authenticate = _Authenticate_;
 	}));
 
-	it('should login', function () {
-		var cred = {emailAddress: 'j@j.com', passwordHash: 'xyz'};
-		var promise = new Promise(function(resolve, reject) {
-			// always resolve rather than reject, for this test
-			resolve({_id: 'qwerty'});
-		});
-		spyOn(User, 'get').andReturn(promise);
-
-		var isItDone = false;
-    	runs(function() {
-			var user = Authenticate.login(cred);
-			// expect(User.get).toHaveBeenCalledWith({emailAddress: cred.emailAddress, passwordHash: cred.passwordHash}, function() {}, function() {})
-			expect(user._id).toBeUndefined();
-		});
-		promise.then(function(val) {
-			isItDone = true; 
-		});
-		waitsFor(function() {
-			return isItDone;
+	it('should login and set a message', function () {
+		var authUser;
+		var deferred = $q.defer();
+		var promise = deferred.promise;
+		promise.then(function(eventualValue) {
+			// populate the user with returned values from the server
+			angular.extend(authUser, eventualValue);
 		});
 
-		runs(function() {
-			expect(user._id).toBe('abcd1234');
-		});
+		spyOn(User, 'get').and.returnValue(deferred.promise);
 
+		authUser = Authenticate.login(user);
+
+		expect(User.get).toHaveBeenCalledWith({emailAddress: user.emailAddress, passwordHash: user.passwordHash}, jasmine.any(Function), jasmine.any(Function))
+		expect(authUser._id).toBeUndefined();
+		deferred.resolve(user);
+		$rootScope.$apply();
+
+		expect(authUser._id).toBe('abcd1234');
 	});
+
+	it('should provide a message on successful login', function () {
+		Authenticate.successMessage(user);
+		expect(Message.success).toHaveBeenCalledWith('You logged in successfully');
+	});
+
+	// it('should login and set a message - second pattern', function () {
+	// 	var authUser;
+	// 	var promise = new Promise(function(resolve, reject) {
+	// 		// always resolve rather than reject, for this test
+	// 		resolve(user);
+	// 	});
+
+	// 	spyOn(User, 'get').and.returnValue(promise);
+
+	// 	var isItDone = false;
+	// 	runs(function() {
+	// 		authUser = Authenticate.login(user);
+	// 		expect(User.get).toHaveBeenCalledWith({emailAddress: user.emailAddress, passwordHash: user.passwordHash}, jasmine.any(Function), jasmine.any(Function));
+	// 		expect(authUser._id).toBeUndefined();
+	// 	});
+	// 	promise.then(function(value) {
+	// 		// populate the user with returned values from the server
+	// 		angular.extend(authUser, value);
+	// 		isItDone = true; 
+	// 	});
+	// 	waitsFor(function() {
+	// 		return isItDone;
+	// 	});
+
+	// 	runs(function() {
+	// 		expect(authUser._id).toBe('abcd1234');
+	// 	});
+
+	// });
+
 
 });

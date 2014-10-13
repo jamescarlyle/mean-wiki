@@ -23,54 +23,50 @@ describe('remoteStorage', function () {
 		$q = _$q_;
 	}));
 
-	// this uses the new Promise api, but we have to jump through hoops with jasmine 1.3
-	it('should save a new item with notification', inject(function($rootScope) {
-		// this is our mock item resource
-		var resourceItemMock = {
-			$save: function() {}
-		}; 
-		angular.extend(resourceItemMock, item);
-		resourceItemMock._id = null;
-		resourceItemMock.serverUpdate = null;
-		spyOn($rootScope, '$emit');
+	it('should save a new item with notification', function() {
 
-		var promise = new Promise(function(resolve, reject) {
-			// always resolve rather than reject, for this test
-			resolve({_id: 'qwerty'});
-		});
-		spyOn(resourceItemMock, '$save').andReturn(promise);
-		var isItDone = false;
+		inject(function($rootScope) {
+			// this is our mock item resource
+			var resourceItemMock = {
+				$save: function() {}
+			}; 
+			// deferred work
+			var deferred = $q.defer();
 
-    	runs(function() {
-			expect(resourceItemMock.$save).not.toHaveBeenCalled();
+			angular.extend(resourceItemMock, item);
+			resourceItemMock._id = null;
+			resourceItemMock.serverUpdate = null;
+			spyOn($rootScope, '$emit');
+
+			// return the deferred work's eventual result value (the promise)
+			spyOn(resourceItemMock, '$save').and.returnValue(deferred.promise);
+
+ 			expect(resourceItemMock.$save).not.toHaveBeenCalled();
 			expect(resourceItemMock._id).toBe(null);
 			expect(resourceItemMock.clientUpdate).toBe(1234);
 			expect(resourceItemMock.serverUpdate).toBe(null);
-			expect(resourceItemMock.serverUpdate).toNotBe(resourceItemMock.clientUpdate);
+			expect(resourceItemMock.serverUpdate).not.toBe(resourceItemMock.clientUpdate);
 			// now perform the save
 			RemoteStorage.store(resourceItemMock, true);
-			// now remove the save function, so it is not serialised in the event
 			expect(resourceItemMock.$save).toHaveBeenCalled();
+			// now remove the save function, so it is not serialised in the event
 			delete resourceItemMock.$save;
 			expect(Message.success).not.toHaveBeenCalled();
 			expect($rootScope.$emit).not.toHaveBeenCalled();
-		});
 
-		promise.then(function(val) {
-			isItDone = true; 
-		});
-		waitsFor(function() {
-			return isItDone;
-		});
+			// set a fulfilled value for the promise
+			deferred.resolve({_id: 'qwerty'});
+			$rootScope.$apply();
 
-		runs(function() {
 			// this won't run until the waitsFor returns true
 			expect(resourceItemMock.serverUpdate).toBe(resourceItemMock.clientUpdate);
 			// now check that the success message was sent
 			expect(Message.success).toHaveBeenCalledWith('Item was saved remotely');
 			expect($rootScope.$emit).toHaveBeenCalledWith('remoteStorageStored', { schema : 'items', name : '#todo', _id : null, user : '1234abcd', clientUpdate : 1234, serverUpdate : 1234, content : 'hello world' });
-		});
-	}));
+		})
+	}
+
+	);
 
 	it('should save a new item without notification', inject(function($rootScope) {
 		// this is our mock item resource
@@ -78,36 +74,24 @@ describe('remoteStorage', function () {
 			$save: function() {}
 		}; 
 		angular.extend(resourceItemMock, item);
+		var deferred = $q.defer();
+		// can resolve the deferred work at any time - this sets the promise state (fulfilled) and value
+		deferred.resolve({_id: 'qwerty'});
+
 		// ensure that save, not update, is called
 		resourceItemMock._id = null;
 		spyOn($rootScope, '$emit');
 
-		var promise = new Promise(function(resolve, reject) {
-			// always resolve rather than reject, for this test
-			resolve({_id: 'qwerty'});
-		});
-		spyOn(resourceItemMock, '$save').andReturn(promise);
-		var isItDone = false;
+		spyOn(resourceItemMock, '$save').and.returnValue(deferred.promise);
 
-    	runs(function() {
-			expect(resourceItemMock.$save).not.toHaveBeenCalled();
-			// now perform the save
-			RemoteStorage.store(resourceItemMock, false);
-			// now remove the save function, so it is not serialised in the event
-			expect(resourceItemMock.$save).toHaveBeenCalled();
-			expect($rootScope.$emit).not.toHaveBeenCalled();
-		});
+		expect(resourceItemMock.$save).not.toHaveBeenCalled();
+		// now perform the save
+		RemoteStorage.store(resourceItemMock, false);
+		// now remove the save function, so it is not serialised in the event
+		expect(resourceItemMock.$save).toHaveBeenCalled();
+		expect($rootScope.$emit).not.toHaveBeenCalled();
 
-		promise.then(function(val) {
-			isItDone = true; 
-		});
-		waitsFor(function() {
-			return isItDone;
-		});
-
-		runs(function() {
-			expect($rootScope.$emit).not.toHaveBeenCalled();
-		});
+		expect($rootScope.$emit).not.toHaveBeenCalled();
 	}));
 	
 	// this code uses the $defer function in angular
@@ -120,15 +104,14 @@ describe('remoteStorage', function () {
 
 		var deferred = $q.defer();
 		var promise = deferred.promise;
-		
-		promise.then(function(value) {
+		promise.then(function(eventualValue) {
 			// populate the resourceItem with returned values from the server
-			angular.extend(resourceItemMock, value);
+			angular.extend(resourceItemMock, eventualValue);
 		});
 
 		resourceItemMock._id = null;
 		resourceItemMock.serverUpdate = null;
-		spyOn(resourceItemMock, '$save').andReturn(promise);
+		spyOn(resourceItemMock, '$save').and.returnValue(promise);
 		spyOn($rootScope, '$emit');
 
 		expect(resourceItemMock._id).toBe(null);
@@ -157,64 +140,42 @@ describe('remoteStorage', function () {
 		}; 
 		angular.extend(resourceItemMock, item);
 		spyOn($rootScope, '$emit');
+		var deferred = $q.defer();
+	
+		spyOn(resourceItemMock, '$update').and.returnValue(deferred.promise);
 
-		var promise = new Promise(function(resolve, reject) {
-			// always resolve rather than reject, for this test
-			resolve({_id: 'qwerty'});
-		});
-		spyOn(resourceItemMock, '$update').andReturn(promise);
-		var isItDone = false;
-
-    	runs(function() {
-			expect(resourceItemMock.$update).not.toHaveBeenCalled();
-			// now perform the save
-			RemoteStorage.store(resourceItemMock, true);
-			// now remove the save function, so it is not serialised in the event
-			expect(resourceItemMock.$update).toHaveBeenCalled();
-			expect($rootScope.$emit).not.toHaveBeenCalled();
-		});
-
-		promise.then(function(val) {
-			isItDone = true; 
-		});
-		waitsFor(function() {
-			return isItDone;
-		});
-
-		runs(function() {
-			expect($rootScope.$emit).toHaveBeenCalled();
-		});
+		expect(resourceItemMock.$update).not.toHaveBeenCalled();
+		// now perform the save
+		RemoteStorage.store(resourceItemMock, true);
+		expect(resourceItemMock.$update).toHaveBeenCalled();
+		expect($rootScope.$emit).not.toHaveBeenCalled();
+		// set the eventual value for the promise
+		deferred.resolve({_id: 'qwerty'});
+		$rootScope.$apply();
+		// now remove the save function, so it is not serialised in the event
+		expect($rootScope.$emit).toHaveBeenCalled();
 	}));
 
 	it('should remove an item', function () {
-		var resourceItemMock = {
-			$remove: function() {}
-		}; 
-		var promise = new Promise(function(resolve, reject) {
-			resolve();
-		});
-		spyOn(resourceItemMock, '$remove').andReturn(promise);
-		var isItDone = false;
+		inject(function($rootScope) {
+			var resourceItemMock = {
+				$remove: function() {}
+			}; 
+			var deferred = $q.defer();
+			spyOn(resourceItemMock, '$remove').and.returnValue(deferred.promise);
 
-    	runs(function() {
 			expect(resourceItemMock.$remove).not.toHaveBeenCalled();
 			// now perform the save
 			RemoteStorage.remove(resourceItemMock);
 			// now remove the save function, so it is not serialised in the event
 			expect(resourceItemMock.$remove).toHaveBeenCalled();
-		});
+			deferred.resolve({});
+			$rootScope.$apply();
 
-		promise.then(function(val) {
-			isItDone = true; 
-		});
-		waitsFor(function() {
-			return isItDone;
-		});
-
-		runs(function() {
 			expect(Message.success).toHaveBeenCalledWith('Item deleted successfully');
 		});
 	});
+
 
 	it('should retrieve an item', function () {
 		// just a wrapper for Resource - no testable functionality

@@ -39,10 +39,11 @@ module.exports = function(config) {
 			'js/test/userMessage.test.js',
 			'js/test/filters.test.js',
 			'js/test/local-storage.test.js',
-			'js/test/remote-storage.test.js',
 			'js/test/resources.test.js',
+			'js/test/remote-storage.test.js',
 			'js/test/authenticate.test.js',
-			'js/test/controllers.test.js'
+			'js/test/controllers.test.js',
+			// 'js/test/authenticate-controller.test.js'
 		],
 
 
@@ -80,9 +81,15 @@ module.exports = function(config) {
 		// enable / disable watching file and executing tests whenever any file changes
 		autoWatch: true,
 
+		plugins: [
+			'karma-chrome-launcher',
+			'karma-jasmine'
+		],
+
 
 		// start these browsers
 		// available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+		// browsers: ['PhantomJS'],
 		browsers: ['Chrome'],
 
 

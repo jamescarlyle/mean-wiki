@@ -54,7 +54,7 @@ describe('app module', function () {
 	it('should track online status', function () {
 		inject(function($window) {
 			// spy on the $apply method of $rootScope - need to call through, otherwise the rootScope.online property won't be set
-			spyOn($rootScope, '$apply').andCallThrough();
+			spyOn($rootScope, '$apply').and.callThrough();
 			// initial expectation
 			expect($rootScope.online).toBe(navigator.onLine);
 			// set initial state

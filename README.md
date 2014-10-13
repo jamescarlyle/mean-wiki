@@ -6,6 +6,7 @@ It is full of bugs and is very fluid, so feel free to observe but I recommend no
 Running servers
 1. mongod -config /usr/local/etc/mongod.conf
 2. node wiki-server-with-people.js
+3. python3 -m http.server or python -m SimpleHTTPServer 80
 
 Running tests (I'll figure out .md syntax later)
 
