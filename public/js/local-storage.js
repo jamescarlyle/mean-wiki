@@ -44,6 +44,11 @@ angular.module('localStorage', ['resources'])
 			}
 		}
 		return items;
+				// items[key] = {}
+				// items[key].schema = {'#':'items','@':'people'}[match[1]];
+				// items[key].symbol = match[1];
+				// items[key].name = match[2];
+				// items[key].syncStatus = item.syncStatus;
 	};
 	$rootScope.$on('remoteStorageStored', function(event, data) {
 		// listen for remote storage events and update so that remote update time stored locally

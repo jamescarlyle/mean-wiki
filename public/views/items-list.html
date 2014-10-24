@@ -14,8 +14,7 @@
 	</div>
 	<div class="panel-body">
 		<p><input class="form-control" ng-model="searchTerm" placeholder="search for items" /></p>
-		<!-- TODO filter for item.name only -->
-		<div ng-repeat="item in items | filter:searchTerm">
+		<div ng-repeat="item in items | filter:searchTerm track by item.symbol + item.name">
 			<h2 style="display:inline">
 				<small>
 				<span ng-class="'glyphicon glyphicon-' + item.syncStatus.status"></span>
