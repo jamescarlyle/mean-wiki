@@ -5,15 +5,11 @@ angular.module('remoteStorage', ['resources'])
 	var store = function(resourceItem, raiseEvent) {
 		// hold the previous updated timestamp, in case we need to revert to it in the event of failure
 		var previousUpdate = resourceItem.serverUpdate;
-		// hold the schema, as this is not being persisted and will not be returned
-		// var schema = resourceItem.schema;
 		// set the server update time to be the same as the client last update
 		resourceItem.serverUpdate = resourceItem.clientUpdate;
-		// if _id exists, already saved on server, so PUT update, otherwise POST an insert
-		(resourceItem._id? resourceItem.$update() : resourceItem.$save())
+		// if id exists, already saved on server, so PUT update, otherwise POST an insert
+		(resourceItem.id? resourceItem.$update() : resourceItem.$save())
 		.then(function() {
-			// TODO not posting this feels odd, but posting feels odd too : maybe just parse name (which is posted!) 
-			// resourceItem.schema = schema;
 			Message.success('Item was saved remotely');
 			// set client update to be same as server, so item shows as synchronised - this is not returned from server, so needs to be readded
 			resourceItem.clientUpdate = resourceItem.serverUpdate;
@@ -40,14 +36,14 @@ angular.module('remoteStorage', ['resources'])
 		})
 	};
 	this.remove = remove;
-	// TODO - should RemoteStorage methods take Resources as parameter? Or _id?
-	this.retrieveOne = function(user, schema, _id) {
+	// TODO - should RemoteStorage methods take Resources as parameter? Or id?
+	this.retrieveOne = function(user_id, schema, id) {
 		// this returns a promise
-		return Item.get({user: user, schema: schema, _id: _id});
+		return Item.get({user_id: user_id, schema: schema, id: id});
 	};
-	this.retrieveModifiedSince = function(user, schema, modifiedSince) {
+	this.retrieveModifiedSince = function(user_id, schema, modifiedSince) {
 		// this returns a promise
-		return Item.queryModifiedSince(user, schema, modifiedSince);
+		return Item.queryModifiedSince(user_id, schema, modifiedSince);
 	};
 	$rootScope.$on('localStorageStored', function(event, data) {
 		// listen for local storage events and replicate remotely

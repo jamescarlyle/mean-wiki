@@ -4,8 +4,8 @@ describe('localStorage', function () {
 	var LocalStorage;
 	var item = {};
 	item.name = '#todo';
-	item._id = 'abcd1234';
-	item.user = '1234abcd';
+	item.id = 'abcd1234';
+	item.user_id = '1234abcd';
 	item.clientUpdate = 1234;
 	item.serverUpdate = 5678;
 	item.content = 'hello world';
@@ -25,16 +25,16 @@ describe('localStorage', function () {
 		'asString': { get : function() {
 			if (this.schema == "items") {
 			return JSON.stringify({
-				_id: this._id, 
-				user: this.user,
+				id: this.id, 
+				// user_id: this.user_id,
 				clientUpdate: this.clientUpdate,
 				serverUpdate: this.serverUpdate,
 				content: this.content
 			});
 		} else {
 			return JSON.stringify({
-				_id: this._id, 
-				user: this.user,
+				id: this.id, 
+				// user_id: this.user_id,
 				clientUpdate: this.clientUpdate,
 				serverUpdate: this.serverUpdate,
 				emailAddress: this.emailAddress,
@@ -80,15 +80,15 @@ describe('localStorage', function () {
 		localStorage.removeItem('#todo');
 		expect(localStorage['#todo']).toBeUndefined;
 		LocalStorage.store(item);
-		expect(localStorage['#todo']).toBe('{"_id":"abcd1234","user":"1234abcd","clientUpdate":1234,"serverUpdate":5678,"content":"hello world"}');
+		expect(localStorage['#todo']).toBe('{"id":"abcd1234","clientUpdate":1234,"serverUpdate":5678,"content":"hello world"}');
 	});
 
 	it('should update an item which already exists', function () {
 		LocalStorage.store(item);
-		expect(localStorage['#todo']).toBe('{"_id":"abcd1234","user":"1234abcd","clientUpdate":1234,"serverUpdate":5678,"content":"hello world"}');
+		expect(localStorage['#todo']).toBe('{"id":"abcd1234","clientUpdate":1234,"serverUpdate":5678,"content":"hello world"}');
 		item.content = 'new content';
 		LocalStorage.store(item);
-		expect(localStorage['#todo']).toBe('{"_id":"abcd1234","user":"1234abcd","clientUpdate":1234,"serverUpdate":5678,"content":"new content"}');
+		expect(localStorage['#todo']).toBe('{"id":"abcd1234","clientUpdate":1234,"serverUpdate":5678,"content":"new content"}');
 	});
 
 	it('should raise an event when signalled, and an item is stored', inject(function($rootScope) {
@@ -105,9 +105,20 @@ describe('localStorage', function () {
 		expect($rootScope.$emit).toNotHaveBeenCalled;
 	}));
 
-	it('should retrieve an item', function () {
+	it('should retrieve an item by name', function () {
 		LocalStorage.store(item);
-		var testItem = LocalStorage.retrieve('items', 'todo');
+		var testItem = LocalStorage.retrieveByName('#todo');
+		expect(testItem.asString).toBe(item.asString);
+	});
+
+	it('should return empty object (no id) when retrieving item by name which doesn\'t exist', function () {
+		var testItem = LocalStorage.retrieveByName('#does not exist');
+		expect(testItem.id).toBeUndefined();
+	});
+
+	it('should retrieve an item by schema', function () {
+		LocalStorage.store(item);
+		var testItem = LocalStorage.retrieveBySchema('items', 'todo');
 		expect(testItem.asString).toBe(item.asString);
 	});
 
@@ -126,7 +137,7 @@ describe('localStorage', function () {
 	it('should remove an item stored', function () {
 		LocalStorage.store(item);
 		LocalStorage.remove(item);
-		var retrievedItem = LocalStorage.retrieve('items', 'todo');
+		var retrievedItem = LocalStorage.retrieveBySchema('items', 'todo');
 		expect(JSON.stringify(retrievedItem)).toBe('{"name":"#todo"}');
 	});
 });

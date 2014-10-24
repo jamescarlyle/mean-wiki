@@ -43,7 +43,7 @@ module.exports = function(config) {
 			'js/test/remote-storage.test.js',
 			'js/test/authenticate.test.js',
 			'js/test/controllers.test.js',
-			// 'js/test/authenticate-controller.test.js'
+			'js/test/authenticate-controller.test.js'
 		],
 
 

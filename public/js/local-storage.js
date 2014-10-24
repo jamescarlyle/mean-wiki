@@ -7,7 +7,6 @@ angular.module('localStorage', ['resources'])
 		if ($rootScope.online == false) {
 			Message.success('Item was saved locally'); 
 		};
-		// if ($rootScope.online == false) { Message.success('Item was saved locally'); };
 		// now emit an event with the resourceItem as object - at this point, no specifcation of schema
 		if (raiseEvent) { $rootScope.$emit('localStorageStored', resourceItem); };
 	};
@@ -19,14 +18,17 @@ angular.module('localStorage', ['resources'])
 		if (raiseEvent) { $rootScope.$emit('localStorageRemoved', resourceItem); };
 	};
 	this.remove = remove;
-	this.retrieve = function(schema, itemName) {
+	var retrieveByName = function(itemName) {
 		// deserialises and returns an item object - populated or empty
 		var resourceItem = new Item();
-		// TODO replace this with map
-		resourceItem.name = (schema == 'items' ? '#' : '@') + itemName;
-		// resourceItem.schema = schema;
-		angular.extend(resourceItem, JSON.parse(localStorage[resourceItem.name] || '{}'));
+		resourceItem.name = itemName;
+		// need to use getItem to return null instead of undefined if not exists
+		angular.extend(resourceItem, JSON.parse(localStorage.getItem(itemName) || '{}'));
 		return resourceItem;
+	};
+	this.retrieveByName = retrieveByName;
+	this.retrieveBySchema = function(schema, itemName) {
+		return this.retrieveByName((schema == 'items' ? '#' : '@') + itemName);
 	};
 	this.retrieveAll = function() {
 		var items = [];

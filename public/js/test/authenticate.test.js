@@ -4,12 +4,11 @@ describe('authenticate', function () {
 	var Authenticate, Message, $q, $rootScope, User;
 	var user = {};
 	user.name = 'james carlyle';
-	user._id = 'abcd1234';
+	user.id = 'abcd1234';
 	user.emailAddress = 'j@j.com';
 	user.passwordHash = 'xyz';
 
 	beforeEach(angular.mock.module('authenticate', function($provide) {
-		// User = jasmine.createSpyObj('User', ['get']);
 		User = {
 			get: function() { }
 		}; 
@@ -38,11 +37,11 @@ describe('authenticate', function () {
 		authUser = Authenticate.login(user);
 
 		expect(User.get).toHaveBeenCalledWith({emailAddress: user.emailAddress, passwordHash: user.passwordHash}, jasmine.any(Function), jasmine.any(Function))
-		expect(authUser._id).toBeUndefined();
+		expect(authUser.id).toBeUndefined();
 		deferred.resolve(user);
 		$rootScope.$apply();
 
-		expect(authUser._id).toBe('abcd1234');
+		expect(authUser.id).toBe('abcd1234');
 	});
 
 	it('should provide a message on successful login', function () {
@@ -63,7 +62,7 @@ describe('authenticate', function () {
 	// 	runs(function() {
 	// 		authUser = Authenticate.login(user);
 	// 		expect(User.get).toHaveBeenCalledWith({emailAddress: user.emailAddress, passwordHash: user.passwordHash}, jasmine.any(Function), jasmine.any(Function));
-	// 		expect(authUser._id).toBeUndefined();
+	// 		expect(authUser.id).toBeUndefined();
 	// 	});
 	// 	promise.then(function(value) {
 	// 		// populate the user with returned values from the server
@@ -75,7 +74,7 @@ describe('authenticate', function () {
 	// 	});
 
 	// 	runs(function() {
-	// 		expect(authUser._id).toBe('abcd1234');
+	// 		expect(authUser.id).toBe('abcd1234');
 	// 	});
 
 	// });

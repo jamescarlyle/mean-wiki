@@ -100,8 +100,8 @@ itemRouter.route('/users/:user/:schema')
 	.get(function(req, res, next) {
 		console.log('http GET called for all modified since ' + req.headers['if-modified-since']);
 		console.log('headers ' + JSON.stringify(req.headers));
-		// we always need to use the user id to partition the item results
-		var queryParams = { user: req.params.user };
+		// we always need to use the user id (taken from url) to partition the item results
+		var queryParams = { user_id: req.params.user };
 		if (req.headers['if-modified-since']) {
 			queryParams.serverUpdate = {'$gt': req.headers['if-modified-since']};
 		}
@@ -117,7 +117,7 @@ itemRouter.route('/users/:user/:schema')
 	.post(function(req, res, next) {
 		console.log('http POST for User ' + req.params.user + ' ' + req.params.schema + ' called with ' + JSON.stringify(req.body));
 		var item = new req.schema(req.body);
-		item.user = req.params.user;
+		item.user_id = req.params.user;
 		item.save(function(err) {
 			if (err) {
 				res.send(err);
@@ -141,6 +141,7 @@ itemRouter.route('/users/:id')
 	})
 	.put(function(req, res, next) {
 		console.log('http PUT for User called with ' + JSON.stringify(req.body));
+		// mongoose will automatically remove the id from the body in strict mode
 		User.findOneAndUpdate({ _id : req.params.id}, req.body, function(err, user) {
 			if (err) {
 				res.send(err);

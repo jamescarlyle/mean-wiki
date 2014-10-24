@@ -76,7 +76,7 @@ describe('app module', function () {
 			expect($rootScope.currentUser).toBeUndefined;
 			var $scope = $rootScope.$new();
 			ApplicationCtrl = $controller('ApplicationCtrl', {$scope: $scope});
-			var user = {_id: 'abcd1234'};
+			var user = {id: 'abcd1234'};
 			$scope.setCurrentUser(user);
 			expect($scope.currentUser).toBe(user);
 		});
