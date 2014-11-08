@@ -11,7 +11,8 @@ Running servers
 Running tests (I'll figure out .md syntax later)
 
 1. Unit tests
-a. From the project root, "karma start karma.conf.js"
+a. Export CHROME_BIN=/usr/bin/chromium-browse
+b. From the project root, "karma start karma.conf.js"
 
 2. E2E tests
 a. From the project root, start Selenium with "webdriver-manager start"

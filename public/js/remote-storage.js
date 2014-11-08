@@ -15,6 +15,7 @@ angular.module('remoteStorage', ['resources'])
 			resourceItem.clientUpdate = resourceItem.serverUpdate;
 			// raise an event for remote storage, so the remote time can be updated in local storage and syncStatus shows synchronised
 			if (raiseEvent == true) { 
+				// now emit an event which will cause the item to be saved locally
 				$rootScope.$emit('remoteStorageStored', resourceItem); 
 			};
 		})
@@ -47,7 +48,8 @@ angular.module('remoteStorage', ['resources'])
 	};
 	$rootScope.$on('localStorageStored', function(event, data) {
 		// listen for local storage events and replicate remotely
-		if ($rootScope.online) {
+		if ($rootScope.online && data.user_id) {
+			// if online and logged in, store, with an event so that local storage updates with serverUpdate time
 			store(data, true);
 		}
 	});	

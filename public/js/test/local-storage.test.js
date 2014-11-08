@@ -2,11 +2,14 @@
 
 describe('localStorage', function () {
 	var LocalStorage;
+	var date = {};
+	date.now = function now() {
+		return 1234;
+    };
 	var item = {};
 	item.name = '#todo';
 	item.id = 'abcd1234';
 	item.user_id = '1234abcd';
-	item.clientUpdate = 1234;
 	item.serverUpdate = 5678;
 	item.content = 'hello world';
 	Object.defineProperties(item, {
@@ -77,13 +80,20 @@ describe('localStorage', function () {
 	});
 
 	it('should store an item which doesn\'t already exist', function () {
+		spyOn(window.Date, 'now').and.callFake(function() {
+			return 1234;
+		});
 		localStorage.removeItem('#todo');
 		expect(localStorage['#todo']).toBeUndefined;
 		LocalStorage.store(item);
-		expect(localStorage['#todo']).toBe('{"id":"abcd1234","clientUpdate":1234,"serverUpdate":5678,"content":"hello world"}');
+		expect(localStorage['#todo']).toBe('{"id":"abcd1234","clientUpdate":5678,"serverUpdate":5678,"content":"hello world"}');
 	});
 
 	it('should update an item which already exists', function () {
+		item.clientUpdate = 0;
+		spyOn(window.Date, 'now').and.callFake(function() {
+			return 1234;
+		});
 		LocalStorage.store(item);
 		expect(localStorage['#todo']).toBe('{"id":"abcd1234","clientUpdate":1234,"serverUpdate":5678,"content":"hello world"}');
 		item.content = 'new content';

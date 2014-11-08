@@ -1,6 +1,8 @@
 angular.module('localStorage', ['resources'])
 .service('LocalStorage', ['Item', 'Message', '$rootScope', function(Item, Message, $rootScope) {
 	var store = function(resourceItem, raiseEvent) {
+		// set the client update to now, unless this is a new item cloned from a remote server
+		resourceItem.clientUpdate = (resourceItem.clientUpdate == null && resourceItem.serverUpdate != null) ? resourceItem.serverUpdate : Date.now();
 		// serialise the passed object and store locally
 		localStorage[resourceItem.name] = resourceItem.asString;
 		// if offline, alert that item was saved locally (online saved message will come from RemoteStorage)

@@ -2,7 +2,7 @@ var controllers = angular.module('controllers', ['localStorage', 'remoteStorage'
 .controller('ItemListCtrl', function ($scope, $rootScope, Configuration, RemoteStorage, LocalStorage) {
 	// freshen local storage from server - will not overwrite items that have not yet been stored, i.e. additive only
 	$scope.refreshItems = function() {
-		var lastCheck = 0 // Configuration.getModifiedSince();
+		var lastCheck = Configuration.getModifiedSince();
 		// this is set before the fetch, because otherwise there is a small gap between the fetch and now that will not be picked up next time
 		Configuration.setModifiedSince(Date.now());
 		// get the list of items and people from the server
@@ -15,7 +15,7 @@ var controllers = angular.module('controllers', ['localStorage', 'remoteStorage'
 					localItem = LocalStorage.retrieveByName(remoteItem.name);
 					// retrieveByName returns an empty object if not found, so check for clientUpdate
 					if (!localItem.clientUpdate) {
-						// need to set clientUpdate
+						// store remote item
 						LocalStorage.store(remoteItem, false);
 					// if local remote is same as remote, and local is ahead of remote, we have a local update not persisted
 					} else if (localItem.serverUpdate == remoteItem.serverUpdate && localItem.clientUpdate > localItem.serverUpdate) {
@@ -42,10 +42,10 @@ var controllers = angular.module('controllers', ['localStorage', 'remoteStorage'
 		$scope.editing = !$scope.item.content && !$scope.item.notes;
 	};
 	$scope.saveItem = function() {
-		// set the client update to now
-		$scope.item.clientUpdate = Date.now();
-		// set the item's user id to be that of the logged in user
-		$scope.item.user_id = $scope.currentUser.id;
+		// if logged in, set the item's user id to be that of the logged in user
+		if ($scope.currentUser) {
+			$scope.item.user_id = $scope.currentUser.id;
+		}
 		// save the edited wiki content to the local storage, raise event for remote storage to listen to
 		LocalStorage.store($scope.item, true);
 	};

@@ -43,7 +43,6 @@ angular.module('resources', ['ngResource'])
 			if (this.schema == "items") {
 			return JSON.stringify({
 				id: this.id, 
-				// user_id: this.user_id,
 				clientUpdate: this.clientUpdate,
 				serverUpdate: this.serverUpdate,
 				content: this.content
@@ -51,7 +50,6 @@ angular.module('resources', ['ngResource'])
 		} else {
 			return JSON.stringify({
 				id: this.id, 
-				// user_id: this.user_id,
 				clientUpdate: this.clientUpdate,
 				serverUpdate: this.serverUpdate,
 				emailAddress: this.emailAddress,
