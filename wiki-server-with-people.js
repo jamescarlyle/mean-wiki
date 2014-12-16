@@ -155,9 +155,12 @@ itemRouter.route('/users/:id')
 itemRouter.route('/users')
 	.get(function(req, res, next) {
 		var query;
-		if (req.query.emailAddress) {
+		if (req.query.emailAddress && req.query.passwordHash) {
 			console.log('http GET called for User with url ' + req.url + ' and query string ' + JSON.stringify(req.query));
 			query = User.findOne({emailAddress : req.query.emailAddress, passwordHash : req.query.passwordHash});
+		} else if (req.query.emailAddress) {
+			console.log('http GET called for User with url ' + req.url + ' and query string ' + JSON.stringify(req.query));
+			query = User.findOne({emailAddress : req.query.emailAddress});
 		} else {
 			console.log('http GET called for Users');
 			query = User.find({});

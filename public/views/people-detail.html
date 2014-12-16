@@ -5,19 +5,19 @@
 <h1>
 	Mean Wiki : {{item.schema}} : {{item.name}} 
 </h1>
-<div ng-show="opStatus" ng-class="'alert alert-' + opStatus" role="alert">
+<div ng-if="opStatus" ng-class="'alert alert-' + opStatus" role="alert">
 		<strong>{{opStatus}}</strong> {{opMessage}}
 </div>
 <div class="panel panel-default" >
 	<div class="panel-heading clearfix">
-		<div ng-show="item.clientUpdate" class="pull-left">Saved at {{item.clientUpdate | date:'dd MMM yyyy HH:mm'}}</div>
-		<div ng-show="item.serverUpdate && item.serverUpdate != item.clientUpdate" class="pull-left">, remotely at {{item.serverUpdate | date:'dd MMM yyyy HH:mm'}}</div>
+		<div ng-if="item.clientUpdate" class="pull-left">Saved at {{item.clientUpdate | date:'dd MMM yyyy HH:mm'}}</div>
+		<div ng-if="item.serverUpdate && item.serverUpdate != item.clientUpdate" class="pull-left">, remotely at {{item.serverUpdate | date:'dd MMM yyyy HH:mm'}}</div>
 		<div class="pull-right">
-			<button ng-show="editing && item._id" ng-disabled="!online" class="btn btn-danger" ng-click="editing=!editing;removeItem()">remove <span class="glyphicon glyphicon-remove"/> </button>
-			<button ng-show="editing" type="button" class="btn btn-default" ng-click="editing=!editing">cancel</button>
-			<button ng-show="editing" type="button" class="btn btn-warning" ng-click="editing=!editing;saveItem()">save</button>
-			<button ng-hide="editing || !item._id || item.getSyncStatus().status != 'save'" ng-disabled="!online" class="btn btn-primary" ng-click="compareItem()">reload <span class="glyphicon glyphicon-refresh"/> </button> 
-			<button ng-hide="editing || item.getSyncStatus().status == 'save'" class="btn btn-primary" ng-click="editing=!editing">edit  <span class="glyphicon glyphicon-pencil"/> </button>
+			<button ng-if="editing && item.id" ng-disabled="!online" class="btn btn-danger" ng-click="editing=!editing;removeItem()">remove <span class="glyphicon glyphicon-remove"/> </button>
+			<button ng-if="editing" type="button" class="btn btn-default" ng-click="editing=!editing">cancel</button>
+			<button ng-if="editing" type="button" class="btn btn-warning" ng-click="editing=!editing;saveItem()">save</button>
+			<button ng-if="!(editing || !item.id || item.getSyncStatus().status != 'save')" ng-disabled="!online" class="btn btn-primary" ng-click="compareItem()">reload <span class="glyphicon glyphicon-refresh"/> </button> 
+			<button ng-if="!(editing || item.getSyncStatus().status == 'save')" class="btn btn-primary" ng-click="editing=!editing">edit  <span class="glyphicon glyphicon-pencil"/> </button>
 		</div>
 	</div>
 	<div class="panel-body">

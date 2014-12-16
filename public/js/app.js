@@ -7,11 +7,16 @@ var app = angular.module('app', [
 	'remoteStorage',
 	'localStorage',
 	'comparison',
-	'controllers'
+	'controllers',
+	'userStorage',
 ])
 // configure routes
 .config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 	$routeProvider.
+	when('/users/:emailAddress', {
+		templateUrl: '/views/user.html',
+		controller: 'UserCtrl'
+	}).
 	when('/:schema/:name', {
 		templateUrl: function(params) { return '/views/' + params.schema + '-detail.html' },
 		controller: 'ItemDetailCtrl'
@@ -19,6 +24,10 @@ var app = angular.module('app', [
 	when('/authenticate/', {
 		templateUrl: '/views/authenticate.html',
 		controller: 'AuthenticateCtrl'
+	}).
+	when('/account/', {
+		templateUrl: '/views/user.html',
+		controller: 'UserCtrl'
 	}).
 	when('/:schema/', {
 		templateUrl: function(params) { return '/views/' + params.schema + '-list.html' },
@@ -36,8 +45,8 @@ var app = angular.module('app', [
 		$scope.currentUser = user;
 	};
 })
-// need to include RemoteStorage as a dependency, otherwise it won't get instantiated (not called directly except as event listener)
-.run(['$window', '$rootScope', 'RemoteStorage', function($window, $rootScope, RemoteStorage) {
+// set up event listeners
+.run(['$window', '$rootScope', function($window, $rootScope) {
 	$rootScope.online = navigator.onLine;
 	$window.addEventListener('offline', function () {
 		$rootScope.$apply(function() {

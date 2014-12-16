@@ -2,7 +2,7 @@ var mongoose  = require('mongoose');
 var Schema  = mongoose.Schema;
 // item schema
 var ItemSchema   = new Schema({
-	name: { type: String, unique: true }
+	name: { type: String, unique: true },
 	user_id: {type : Schema.Types.ObjectId, ref : 'User'},
 	serverUpdate: { type: Number },
 	content: String

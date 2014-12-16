@@ -8,29 +8,31 @@ var controllers = angular.module('controllers', ['localStorage', 'remoteStorage'
 		// get the list of items and people from the server
 		['items','people'].forEach(function(schema) {
 			RemoteStorage.retrieveModifiedSince($scope.currentUser.id, schema, lastCheck).$promise.then(function(serverItems) {
-				var localItem, remoteItem;
 				for (i = 0; i < serverItems.length; i++) {
 					// arange items for comparison
-					remoteItem = serverItems[i];
-					localItem = LocalStorage.retrieveByName(remoteItem.name);
+					var remoteItem = serverItems[i];
+					var localItem = LocalStorage.retrieveByName(remoteItem.name);
 					// retrieveByName returns an empty object if not found, so check for clientUpdate
 					if (!localItem.clientUpdate) {
 						// store remote item
 						LocalStorage.store(remoteItem, false);
+						// now add the item to the scope items list
+						$scope.items[remoteItem.name] = remoteItem.summary;
 					// if local remote is same as remote, and local is ahead of remote, we have a local update not persisted
 					} else if (localItem.serverUpdate == remoteItem.serverUpdate && localItem.clientUpdate > localItem.serverUpdate) {
-						// signal recent local save, will trigger remote save
-						$rootScope.$emit('localStorageStored', localItem);
+						// if online and logged in, save
+						RemoteStorage.store(localItem);
 					} else if (localItem.serverUpdate != remoteItem.serverUpdate) {
-						// for the time being, simply update the remote update time on the local instance
+						// TODO for the time being, simply update the remote update time on the local instance
 						localItem.serverUpdate = remoteItem.serverUpdate;
 						// and store locally
 						LocalStorage.store(localItem, false);
+						// now update item to the scope items list
+						$scope.items[localItem.name] = localItem.summary;
 					};
 				}
 			});
 		});
-		$scope.items = LocalStorage.retrieveAll();
 	};
 	$scope.items = LocalStorage.retrieveAll();
 })
@@ -46,12 +48,12 @@ var controllers = angular.module('controllers', ['localStorage', 'remoteStorage'
 		if ($scope.currentUser) {
 			$scope.item.user_id = $scope.currentUser.id;
 		}
-		// save the edited wiki content to the local storage, raise event for remote storage to listen to
+		// save the edited wiki content to the local storage, and apply remotely
 		LocalStorage.store($scope.item, true);
 	};
 	$scope.removeItem = function() {
        if (confirm('do you want to delete this item?') == true) {
-        	// send a delete to the remote store, raise event for remote storage to listen to
+        	// send a delete to the remote store, and apply remotely
 			LocalStorage.remove($scope.item, true);
 			// redirect to the list page
 			$location.path('/items');
@@ -85,7 +87,19 @@ var controllers = angular.module('controllers', ['localStorage', 'remoteStorage'
 	$scope.logout = function() {
 		Authenticate.logout();
 		$scope.setCurrentUser(null);
+		$location.path('/items/');
 	}
 
 })
-;
+.controller('UserCtrl', function($scope, $routeParams, $location, UserStorage, User) {
+	$scope.saveUser = function() {
+		UserStorage.store($scope.user);
+		$location.path($scope.currentUser ? '/items/' : '/authenticate/');
+	};
+	$scope.loadUser = function() {
+		//  TODO $scope.user = $routeParams.emailAddress ? UserStorage.retrieveByEmailAddress($routeParams.emailAddress) : new User();
+		// TODO - previous user remained on form after logout
+		$scope.user = $scope.currentUser ? UserStorage.retrieve($scope.currentUser.id) : new User();
+	}
+	$scope.loadUser();
+});

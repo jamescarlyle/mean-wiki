@@ -97,6 +97,21 @@ describe('resources module', function () {
 		item.name = '@james';
 		expect(item.schema).toEqual('people');
 	});
+
+	it('should have an Item.getSummary method', function () {
+		var item = new Item();
+		item.name = '#todoagain';
+		item.user_id = '53e56a9e4938931d944740a3';
+		item.clientUpdate = 1407813235732;
+		item.serverUpdate = 1407813235732;
+		var summary = Item.getSummary(item);
+		expect(summary.schema).toEqual('items');
+		expect(summary.name).toEqual('todoagain');
+		expect(summary.syncStatus).toEqual({ status : 'saved', message : 'synchronised' });
+		expect(item.summary.schema).toEqual('items');
+		expect(item.summary.name).toEqual('todoagain');
+		expect(item.summary.syncStatus).toEqual({ status : 'saved', message : 'synchronised' });
+	})
 	
 	it('should define an item with a asString property', function () {
 		var item = new Item();

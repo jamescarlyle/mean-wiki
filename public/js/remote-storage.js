@@ -2,29 +2,25 @@ angular.module('remoteStorage', ['resources'])
 // service for Items
 .service('RemoteStorage', ['Item', 'Message', '$rootScope', function(Item, Message, $rootScope) {
 	// the function is the constructor - return an map of function names and the function provided
-	var store = function(resourceItem, raiseEvent) {
-		// hold the previous updated timestamp, in case we need to revert to it in the event of failure
-		var previousUpdate = resourceItem.serverUpdate;
-		// set the server update time to be the same as the client last update
-		resourceItem.serverUpdate = resourceItem.clientUpdate;
-		// if id exists, already saved on server, so PUT update, otherwise POST an insert
-		(resourceItem.id? resourceItem.$update() : resourceItem.$save())
-		.then(function() {
-			Message.success('Item was saved remotely');
-			// set client update to be same as server, so item shows as synchronised - this is not returned from server, so needs to be readded
-			resourceItem.clientUpdate = resourceItem.serverUpdate;
-			// raise an event for remote storage, so the remote time can be updated in local storage and syncStatus shows synchronised
-			if (raiseEvent == true) { 
-				// now emit an event which will cause the item to be saved locally
-				$rootScope.$emit('remoteStorageStored', resourceItem); 
-			};
-		})
-		.catch(function() { 
-			// resourceItem.schema = schema;
-			Message.failure('Item was not saved remotely');
-			// roll back the server update as update did not go through
-			resourceItem.serverUpdate = previousUpdate;
-		})
+	var store = function(resourceItem) {
+		if ($rootScope.online && resourceItem.user_id) {
+			// hold the previous updated timestamp, in case we need to revert to it in the event of failure
+			var previousServer = resourceItem.serverUpdate;
+			// set the server update time to be the same as the client last update
+			resourceItem.serverUpdate = resourceItem.clientUpdate;
+			// if id exists, already saved on server, so PUT update, otherwise POST an insert
+			(resourceItem.id? resourceItem.$update() : resourceItem.$save())
+			.then(function() {
+				Message.success('Item was saved remotely');
+				// set client update to be same as server, so item shows as synchronised - this is not returned from server, so needs to be readded
+				resourceItem.clientUpdate = resourceItem.serverUpdate;
+			})
+			.catch(function() { 
+				Message.failure('Item was not saved remotely');
+				// roll back the server update as update did not go through
+				resourceItem.serverUpdate = previousServer;
+			})
+		}
 	};
 	this.store = store;
 	var remove = function(resourceItem) {

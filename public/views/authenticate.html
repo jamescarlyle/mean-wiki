@@ -1,26 +1,24 @@
 <!-- single item -->
 <h1>
 	Mean Wiki : login
-	<!-- 
-	TODO - should we show an authentication status on every page?
-	<small class="pull-right">
-			<span ng-class="'glyphicon glyphicon-' + item.getSyncStatus().status"></span> {{item.syncStatus.message}}
-	</small> -->
 </h1>
 <div ng-show="opStatus" ng-class="'alert alert-' + opStatus" role="alert">
 	<strong>{{opStatus}}</strong> {{opMessage}}
 </div>
 <div class="panel panel-default" >
 	<div class="panel-body">
-		<form role="form">
+		<form name="form" role="form">
 			<fieldset>
 				<div class="form-group">
 					<label for="emailAddress">email address</label>
-					<input type="email" class="form-control" id="emailAddress" ng-model="user.emailAddress" placeholder="email address">
+					<input type="email" class="form-control" id="emailAddress" name="emailAddress" ng-model="user.emailAddress" required placeholder="email address">
+					<span class="error" ng-show="form.emailAddress.$error.required">your email address is required!</span>
+					<span class="error" ng-show="form.emailAddress.$error.email">your email address is not valid</span>
 				</div>
 				<div class="form-group">
 					<label for="passwordHash">password</label>
-					<input type="text" class="form-control" id="passwordHash" ng-model="user.passwordHash" placeholder="password">
+					<input type="text" class="form-control" id="passwordHash" name="passwordHash" ng-model="user.passwordHash" required placeholder="password">
+					<span class="error" ng-show="form.passwordHash.$error.required">your password is required!</span>
 				</div>
 			</fieldset>
 			<button type="button" class="btn btn-warning" ng-click="login(user)">login</button>

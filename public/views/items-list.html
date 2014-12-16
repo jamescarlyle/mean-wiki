@@ -14,14 +14,14 @@
 	</div>
 	<div class="panel-body">
 		<p><input class="form-control" ng-model="searchTerm" placeholder="search for items" /></p>
-		<div ng-repeat="item in items | filter:searchTerm track by item.symbol + item.name">
+ 		<div ng-repeat="(name, summary) in items | filter:searchTerm track by name">
 			<h2 style="display:inline">
 				<small>
-				<span ng-class="'glyphicon glyphicon-' + item.syncStatus.status"></span>
+				<span ng-class="'glyphicon glyphicon-' + summary.syncStatus.status"></span>
 				</small>
-				<a href="#/{{item.schema}}/{{item.name}}">{{item.symbol}}{{item.name}}</a>
+				<a href="#/{{summary.schema}}/{{summary.name}}">{{name}}</a>
 			</h2>
-			<p class="pull-right" style="display:inline">{{item.syncStatus.message}}</p>
+			<p class="pull-right" style="display:inline">{{summary.syncStatus.message}}</p>
 		</div>
 	</div>
 </div>

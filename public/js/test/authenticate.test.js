@@ -37,6 +37,7 @@ describe('authenticate', function () {
 		authUser = Authenticate.login(user);
 
 		expect(User.get).toHaveBeenCalledWith({emailAddress: user.emailAddress, passwordHash: user.passwordHash}, jasmine.any(Function), jasmine.any(Function))
+		// TODO expect(User.get).toHaveBeenCalledWith({emailAddress: user.emailAddress, passwordHash: user.passwordHash})
 		expect(authUser.id).toBeUndefined();
 		deferred.resolve(user);
 		$rootScope.$apply();

@@ -1,4 +1,4 @@
-var filters = angular.module('filters', ['ngSanitize'])
+angular.module('filters', ['ngSanitize'])
 // filter to convert names to links
 .filter('wikify', function() {
 	return function(input) {

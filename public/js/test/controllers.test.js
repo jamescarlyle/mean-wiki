@@ -14,7 +14,8 @@ describe('controllers', function () {
 		store: function() { }
 	};
 	var remoteStorageMock = {
-		retrieveModifiedSince: function() { return {} }
+		retrieveModifiedSince: function() { return {} },
+		store: function() {}
 	};
 	var configurationMock = {
 		// this needs to be defined to return something - anything
@@ -99,7 +100,6 @@ describe('controllers', function () {
 		deferred.resolve([{name: '#todo', serverUpdate: 1234}]);
 		$rootScope.$digest()
 		expect(remoteStorageMock.retrieveModifiedSince).toHaveBeenCalled();
-		expect($rootScope.$emit).toHaveBeenCalledWith('localStorageStored', { serverUpdate : 1234, clientUpdate : 5678 });
 	}));
 
 	it('should add local items where the item exists remotely but not locally', inject(function($q) {
@@ -107,11 +107,12 @@ describe('controllers', function () {
 		spyOn(remoteStorageMock, 'retrieveModifiedSince').and.returnValue({$promise: deferred.promise});
 		spyOn(localStorageMock, 'retrieveByName').and.returnValue({name: '#todo'});
 		spyOn(localStorageMock, 'store');
-		spyOn($rootScope, '$emit');
 		$scope.refreshItems();
 		deferred.resolve([{name: '#todo', serverUpdate: 9999}]);
 		$rootScope.$digest()
 		expect(remoteStorageMock.retrieveModifiedSince).toHaveBeenCalled();
 		expect(localStorageMock.store).toHaveBeenCalledWith({name: '#todo', serverUpdate : 9999}, false);
+		expect(Object.keys($scope.items).length).toEqual(1);
+		expect(Object.keys($scope.items)).toEqual(['#todo']);
 	}));
 });

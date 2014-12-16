@@ -36,7 +36,7 @@ describe('remoteStorage', function () {
 			angular.extend(resourceItemMock, item);
 			resourceItemMock.id = null;
 			resourceItemMock.serverUpdate = null;
-			spyOn($rootScope, '$emit');
+			$rootScope.online = true;
 
 			// return the deferred work's eventual result value (the promise)
 			spyOn(resourceItemMock, '$save').and.returnValue(deferred.promise);
@@ -47,12 +47,11 @@ describe('remoteStorage', function () {
 			expect(resourceItemMock.serverUpdate).toBe(null);
 			expect(resourceItemMock.serverUpdate).not.toBe(resourceItemMock.clientUpdate);
 			// now perform the save
-			RemoteStorage.store(resourceItemMock, true);
+			RemoteStorage.store(resourceItemMock);
 			expect(resourceItemMock.$save).toHaveBeenCalled();
 			// now remove the save function, so it is not serialised in the event
 			delete resourceItemMock.$save;
 			expect(Message.success).not.toHaveBeenCalled();
-			expect($rootScope.$emit).not.toHaveBeenCalled();
 
 			// set a fulfilled value for the promise
 			deferred.resolve({id: 'qwerty'});
@@ -62,11 +61,8 @@ describe('remoteStorage', function () {
 			expect(resourceItemMock.serverUpdate).toBe(resourceItemMock.clientUpdate);
 			// now check that the success message was sent
 			expect(Message.success).toHaveBeenCalledWith('Item was saved remotely');
-			expect($rootScope.$emit).toHaveBeenCalledWith('remoteStorageStored', { schema : 'items', name : '#todo', id : null, user_id : '1234abcd', clientUpdate : 1234, serverUpdate : 1234, content : 'hello world' });
 		})
-	}
-
-	);
+	});
 
 	it('should save a new item without notification', inject(function($rootScope) {
 		// this is our mock item resource
@@ -75,23 +71,19 @@ describe('remoteStorage', function () {
 		}; 
 		angular.extend(resourceItemMock, item);
 		var deferred = $q.defer();
+		$rootScope.online = true;
 		// can resolve the deferred work at any time - this sets the promise state (fulfilled) and value
 		deferred.resolve({id: 'qwerty'});
 
 		// ensure that save, not update, is called
 		resourceItemMock.id = null;
-		spyOn($rootScope, '$emit');
-
 		spyOn(resourceItemMock, '$save').and.returnValue(deferred.promise);
 
 		expect(resourceItemMock.$save).not.toHaveBeenCalled();
 		// now perform the save
-		RemoteStorage.store(resourceItemMock, false);
+		RemoteStorage.store(resourceItemMock);
 		// now remove the save function, so it is not serialised in the event
 		expect(resourceItemMock.$save).toHaveBeenCalled();
-		expect($rootScope.$emit).not.toHaveBeenCalled();
-
-		expect($rootScope.$emit).not.toHaveBeenCalled();
 	}));
 	
 	// this code uses the $defer function in angular
@@ -101,6 +93,7 @@ describe('remoteStorage', function () {
 			$save: function() { }
 		}; 
 		angular.extend(resourceItemMock, item);
+		$rootScope.online = true;
 
 		var deferred = $q.defer();
 		var promise = deferred.promise;
@@ -112,12 +105,11 @@ describe('remoteStorage', function () {
 		resourceItemMock.id = null;
 		resourceItemMock.serverUpdate = null;
 		spyOn(resourceItemMock, '$save').and.returnValue(promise);
-		spyOn($rootScope, '$emit');
 
 		expect(resourceItemMock.id).toBe(null);
 		expect(resourceItemMock.clientUpdate).toBe(1234);
 		expect(resourceItemMock.serverUpdate).toBe(null);
-		RemoteStorage.store(resourceItemMock, true);
+		RemoteStorage.store(resourceItemMock);
 		expect(resourceItemMock.$save).toHaveBeenCalled();
 
 		// check that the server time was synchronised with the client time
@@ -131,7 +123,6 @@ describe('remoteStorage', function () {
 		$rootScope.$apply();
 		// now check that the success message was sent
 		expect(Message.success).toHaveBeenCalledWith('Item was saved remotely');
-		expect($rootScope.$emit).toHaveBeenCalledWith('remoteStorageStored', { schema : 'items', name : '#todo', id : '54005ea7b9a5d362994ef0e4', user_id : '1234abcd', clientUpdate : 1234, serverUpdate : 1234, content : 'hello world', __v : 0 });
 	}));
 
 	it('should update an existing item', inject(function($rootScope) {
@@ -139,21 +130,26 @@ describe('remoteStorage', function () {
 			$update: function() {}
 		}; 
 		angular.extend(resourceItemMock, item);
-		spyOn($rootScope, '$emit');
-		var deferred = $q.defer();
-	
-		spyOn(resourceItemMock, '$update').and.returnValue(deferred.promise);
+		$rootScope.online = true;
+
+		var deferred = $q.defer();	
+		var promise = deferred.promise;
+		promise.then(function(eventualValue) {
+			// populate the resourceItem with returned values from the server
+			angular.extend(resourceItemMock, eventualValue);
+		});
+		spyOn(resourceItemMock, '$update').and.returnValue(promise);
 
 		expect(resourceItemMock.$update).not.toHaveBeenCalled();
 		// now perform the save
-		RemoteStorage.store(resourceItemMock, true);
+		RemoteStorage.store(resourceItemMock);
 		expect(resourceItemMock.$update).toHaveBeenCalled();
-		expect($rootScope.$emit).not.toHaveBeenCalled();
 		// set the eventual value for the promise
-		deferred.resolve({id: 'qwerty'});
+		deferred.resolve({id: 'qwerty', serverUpdate: 91011});
 		$rootScope.$apply();
-		// now remove the save function, so it is not serialised in the event
-		expect($rootScope.$emit).toHaveBeenCalled();
+		// client and server updates should be in sync after a successful save
+		expect(resourceItemMock.clientUpdate).toBe(91011);
+		expect(resourceItemMock.serverUpdate).toBe(91011);
 	}));
 
 	it('should remove an item', function () {
@@ -162,6 +158,7 @@ describe('remoteStorage', function () {
 				$remove: function() {}
 			}; 
 			var deferred = $q.defer();
+			$rootScope.online = true;
 			spyOn(resourceItemMock, '$remove').and.returnValue(deferred.promise);
 
 			expect(resourceItemMock.$remove).not.toHaveBeenCalled();

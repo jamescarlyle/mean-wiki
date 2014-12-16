@@ -101,20 +101,6 @@ describe('localStorage', function () {
 		expect(localStorage['#todo']).toBe('{"id":"abcd1234","clientUpdate":1234,"serverUpdate":5678,"content":"new content"}');
 	});
 
-	it('should raise an event when signalled, and an item is stored', inject(function($rootScope) {
-		spyOn($rootScope, '$emit');
-		LocalStorage.store(item, true);
-		expect($rootScope.$emit).toHaveBeenCalledWith('localStorageStored', item);
-	}));
-
-	it('should not raise an event when explicit or not specified, and an item is stored', inject(function($rootScope) {
-		spyOn($rootScope, '$emit');
-		LocalStorage.store(item, false);
-		expect($rootScope.$emit).toNotHaveBeenCalled;
-		LocalStorage.store(item);
-		expect($rootScope.$emit).toNotHaveBeenCalled;
-	}));
-
 	it('should retrieve an item by name', function () {
 		LocalStorage.store(item);
 		var testItem = LocalStorage.retrieveByName('#todo');
@@ -135,10 +121,9 @@ describe('localStorage', function () {
 	it('should retrieve a list of names, schema, syncStatus for all items', function () {
 		LocalStorage.store(item);
 		var testItems = LocalStorage.retrieveAll();
-		expect(testItems.length).toBe(1);
-		var testItem = testItems[0];
+		expect(Object.keys(testItems).length).toBe(1);
+		var testItem = testItems[item.name];
 		expect(testItem.schema).toBe(item.schema);
-		expect(testItem.symbol).toBe(item.name.charAt(0));
 		expect(testItem.name).toBe(item.name.slice(1));
 		expect(testItem.syncStatus.status).toBe(item.syncStatus.status);
 		expect(testItem.syncStatus.message).toBe(item.syncStatus.message);
