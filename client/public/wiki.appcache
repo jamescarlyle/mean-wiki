@@ -1,0 +1,25 @@
+CACHE MANIFEST
+index.html
+css/bootstrap.min.css
+fonts/glyphicons-halflings-regular.woff
+lib/angular.min.js
+lib/angular-sanitize.min.js
+lib/angular-route.min.js
+lib/angular-resource.min.js
+js/app.js
+js/config.js
+js/user-message.js
+js/filters.js
+js/resources.js
+js/remote-storage.js
+js/local-storage.js
+js/user-storage.js
+js/comparison.js
+js/authenticate.js
+js/controllers.js
+views/authenticate.html
+views/getting-started.html
+views/user.html
+views/items-list.html
+views/items-detail.html
+views/people-detail.html

@@ -1,0 +1,40 @@
+<h1><span class="glyphicon glyphicon-link" /></span> Mean Wiki : account maintenance</h1>
+<div class="panel panel-primary">
+	<div ng-if="!currentUser" class="panel-body">
+		<p class="lead">Thanks for signing up for an account with the Mean Wiki service.</p>
+		<p>Your account will allow you to save your wiki items on our secure server, and then you will be able to access them from any other device</p>
+		<p>They will also be available to you if your computer or device is lost or stolen.</p>
+	</div>
+	<div ng-if="currentUser" class="panel-body">
+		<p>Use this form to make changes to your account details</p>
+	</div>
+</div>
+<div class="panel panel-primary" >
+	<div class="panel-body">
+		<form name="form" role="form">
+			<fieldset>
+				<div class="form-group">
+					<label for="name">name</label>
+					<input type="text" class="form-control" id="name" ng-model="user.name" placeholder="your name">
+				</div>
+				<div class="form-group">
+					<label for="emailAddress">email address</label>
+					<input type="email" class="form-control" id="emailAddress" name="emailAddress" ng-model="user.emailAddress" required placeholder="email address">
+					<span class="error" ng-show="form.emailAddress.$error.required">your email address is required!</span>
+					<span class="error" ng-show="form.emailAddress.$error.email">your email address is not valid</span>
+				</div>
+				<div class="form-group">
+					<label for="password">password</label>
+					<input type="text" class="form-control" id="password" name="password" ng-model="user.password" required placeholder="password">
+					<span class="error" ng-show="form.password.$error.required">your password is required!</span>
+				</div>
+			</fieldset>
+				<div class="form-group">
+					<label for="password">confirm password</label>
+					<input type="text" class="form-control" id="passwordConfirm" ng-model="user.passwordConfirm" placeholder="confirm password">
+				</div>
+			</fieldset>
+			<button type="button" class="btn btn-warning" ng-click="saveUser()">save</button>
+		</form>
+	</div>
+</div>

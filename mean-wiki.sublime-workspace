@@ -1,0 +1,401 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"retur",
+				"returnValue"
+			],
+			[
+				"act",
+				"activityTab"
+			],
+			[
+				"ho",
+				"holdings"
+			],
+			[
+				"hol",
+				"holding"
+			],
+			[
+				"Ins",
+				"Institution"
+			],
+			[
+				"ins",
+				"institutions"
+			],
+			[
+				"Trust",
+				"Trustee"
+			],
+			[
+				"fra",
+				"frank"
+			],
+			[
+				"roo",
+				"rootScope_"
+			],
+			[
+				"mana",
+				"managers"
+			],
+			[
+				"corpora",
+				"corporates"
+			],
+			[
+				"corp",
+				"corp1"
+			],
+			[
+				"cor",
+				"corporates"
+			],
+			[
+				"to",
+				"todo"
+			],
+			[
+				"get",
+				"getSummary"
+			],
+			[
+				"server",
+				"serverUpdate"
+			],
+			[
+				"client",
+				"clientUpdate"
+			],
+			[
+				"locati",
+				"locationMock"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+		],
+		"width": 467.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/james/Google Drive/Software/mean-wiki/public",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/test"
+	],
+	"file_history":
+	[
+		"/home/james/Google Drive/Software/mean-wiki/public/views/items-list.html",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/test/remote-storage.test.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/remote-storage.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/local-storage.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/test/user-storage.test.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/views/items-detail.html",
+		"/home/james/Google Drive/Software/mean-wiki/public/views/people-detail.html",
+		"/home/james/Google Drive/Software/mean-wiki/public/index.html",
+		"/home/james/Google Drive/Software/mean-wiki/public/wiki.appcache",
+		"/home/james/Google Drive/Software/simple-wiki/app/application/controllers.js",
+		"/home/james/Google Drive/Software/simple-wiki/app/index.html",
+		"/home/james/.cache/.fr-ES20ko/_EXAMPLE_INT_.php",
+		"/home/james/Google Drive/Software/1c1c/views/institution.html",
+		"/home/james/Google Drive/Software/1c1c/js/institution.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/user-storage.js",
+		"/home/james/Google Drive/Software/1c1c/fonts/glyphicons-halflings-regular.woff",
+		"/home/james/Google Drive/Software/socket-io-test/public/socket-test.html",
+		"/home/james/Google Drive/Software/socket-io-test/app.js",
+		"/home/james/Google Drive/Software/angular-socket-io/mock/socket-io.js",
+		"/home/james/Google Drive/Software/ngbp/README.md",
+		"/home/james/Google Drive/Software/1c1c/views/manager.html",
+		"/home/james/Google Drive/Software/1c1c/views/person.html",
+		"/home/james/Desktop/1c1c/js/app.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/app.js",
+		"/home/james/Documents/Software/angular-1.3.3/angular-route.js",
+		"/home/james/Documents/Software/angular-1.3.3/angular-resource.js",
+		"/home/james/Google Drive/Software/mean-wiki/karma.conf.js",
+		"/home/james/Google Drive/Software/1c1c/index.html",
+		"/home/james/Google Drive/Software/1c1c/views/corporate.html",
+		"/home/james/Google Drive/Software/1c1c/views/individual.html",
+		"/home/james/Google Drive/Software/1c1c/js/app.js",
+		"/home/james/Google Drive/Software/1c1c/js/controllers.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/resources.js",
+		"/home/james/Google Drive/Software/1c1c/views/people-detail.html",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/authenticate.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/views/user.html",
+		"/home/james/Google Drive/Software/mean-wiki/public/views/authenticate.html",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/controllers.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/lib/angular-resource.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/test/authenticate.test.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/test/app.test.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/lib/angular.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/lib/angular-sanitize.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/filters.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/test/filters.test.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/lib/angular-sanitize.min.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/lib/angular-mocks.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/user-message.js",
+		"/home/james/Google Drive/Software/mean-wiki/models/user.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/views/getting-started.html",
+		"/home/james/Google Drive/Software/mean-wiki/models/item.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/lib/angular-messages.js",
+		"/home/james/Google Drive/Software/mean-wiki/wiki-server-with-people.js",
+		"/home/james/Google Drive/Software/mean-wiki/models/person.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/user.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/user-service.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/test/local-storage.test.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/test/controllers.test.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/test/resources.test.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/config.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/test/config.test.js",
+		"/home/james/Google Drive/Software/mean-wiki/node_modules/karma-jasmine/lib/jasmine.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/lib/jasmine.js",
+		"/home/james/Google Drive/Software/mean-wiki/README.md",
+		"/home/james/Google Drive/Software/loopback/server/server.js",
+		"/home/james/Google Drive/Software/loopback/common/models/to-do-item.json",
+		"/home/james/Google Drive/Software/loopback/node_modules/loopback/example/client-server/client.js",
+		"/home/james/Google Drive/Software/loopback/client/README.md",
+		"/home/james/Google Drive/Software/loopback/common/models/to-do-item.js",
+		"/home/james/Google Drive/Software/loopback/server/config.json",
+		"/home/james/Google Drive/Software/loopback/server/datasources.json",
+		"/home/james/Google Drive/Software/loopback/server/model-config.json",
+		"/home/james/Google Drive/Software/loopback/server/boot/rest-api.js",
+		"/home/james/Google Drive/Software/mean-wiki/public/js/test/authenticate-controller.test.js",
+		"/home/james/Google Drive/Software/cpg-talk/parallel/svc.js",
+		"/home/james/Google Drive/Software/cpg-talk/parallel/callbacks-async.js",
+		"/home/james/Google Drive/Software/cpg-talk/parallel/generators.js",
+		"/home/james/Google Drive/Software/cpg-talk/parallel/generators-co.js",
+		"/home/james/Google Drive/Software/cpg-talk/parallel/promises.js",
+		"/home/james/Google Drive/Software/cpg-talk/simple/add-promise.js",
+		"/home/james/Google Drive/Software/cpg-talk/simple/callback.js",
+		"/home/james/Google Drive/Software/cpg-talk/simple/gen.js",
+		"/home/james/Google Drive/Software/cpg-talk/simple/generator.js",
+		"/home/james/Google Drive/Software/cpg-talk/simple/promise.js"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			"/home/james/Google Drive/Software/mean-wiki/public",
+			"/home/james/Google Drive/Software/mean-wiki/",
+			"/home/james/Google Drive/Software/mean-wiki/public/",
+			"/home/james/Google Drive/Software/mean-wiki/public/js/",
+			"/home/james/Google Drive/Software/mean-wiki/public/js/*.js",
+			"/home/james/Google Drive/Software/mean-wiki/public/js",
+			"/home/james/Google Drive/Software/mean-wiki/public/",
+			"/home/james/Google Drive/Software/mean-wiki/public/js",
+			"/home/james/Google Drive/Software/mean-wiki/public/j"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"show",
+			"._id",
+			"_id",
+			"previousUpdate",
+			"andrew",
+			"png",
+			"date",
+			"be:",
+			"(institution.manager).image",
+			"(institution.manager)",
+			"ng-if",
+			"img",
+			"person",
+			"trac",
+			"persons",
+			"holding/",
+			"product",
+			"email",
+			"related",
+			"activities",
+			"individual",
+			"corporate",
+			"corporates",
+			"individual",
+			"corporate",
+			"corporates",
+			"c456",
+			"c123",
+			"i456",
+			"i789",
+			"i123",
+			"c123",
+			"individual",
+			"individuals",
+			"corporate",
+			"corporates",
+			"corporate",
+			"remoteStorage",
+			"individual",
+			"briefcase",
+			"showExternal",
+			"s123",
+			"s456",
+			"userStorage",
+			"filter",
+			"_id",
+			"scope.ite",
+			"substr",
+			"splice",
+			"RemoteStorage.store",
+			"LocalStorage.store",
+			".clientUpdate =",
+			"LocalStorage.store",
+			"mockDate",
+			"retrieveAll",
+			"compareItem",
+			"getItemByName",
+			"retrieveBy",
+			"retrieve",
+			"schema",
+			"loadItem",
+			"TODO",
+			"user",
+			".user",
+			"user.",
+			"retrieve",
+			"retrieveOne",
+			"user",
+			"_id",
+			"r_id",
+			"^r_id",
+			"_id",
+			"retr",
+			"user",
+			"then("
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"entity"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": false
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 25.0
+	},
+	"input":
+	{
+		"height": 33.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"project": "mean-wiki.sublime-project",
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 183.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
