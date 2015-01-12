@@ -2,7 +2,7 @@ angular.module('authenticate', ['resources'])
 // service for User authentication
 .service('Authenticate', ['User', 'Message', function(User, Message) {
 	// this.login = function (user) {
-	// 	User.get({emailAddress: user.emailAddress, passwordHash: user.passwordHash})
+	// 	User.get({emailAddress: user.emailAddress, password: user.password})
 	// 	.then(function () {
 	// 		if (user.id) {
 	// 			Message.success('You logged in successfully');
@@ -16,7 +16,7 @@ angular.module('authenticate', ['resources'])
 	// 	});
 	// };
 	this.login = function(user) {
-		return User.get({emailAddress: user.emailAddress, passwordHash: user.passwordHash}, this.successMessage, this.failureMessage);
+		return User.get({emailAddress: user.emailAddress, password: user.password}, this.successMessage, this.failureMessage);
 	};
 	this.logout = function() {
 		Message.success('You logged out successfully');

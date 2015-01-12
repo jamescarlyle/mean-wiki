@@ -24,7 +24,7 @@ describe('controllers', function () {
 	}));
 
 	it('should login a user', inject(function($q) {
-		var user = {id: 'abcd1234', emailAddress: 'j@j.com', passwordHash: 'xyz'};
+		var user = {id: 'abcd1234', emailAddress: 'j@j.com', password: 'xyz'};
 		var deferred = $q.defer();
 
 		spyOn(authenticateMock, 'login').and.returnValue({$promise: deferred.promise});

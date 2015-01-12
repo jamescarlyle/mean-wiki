@@ -6,7 +6,7 @@ describe('authenticate', function () {
 	user.name = 'james carlyle';
 	user.id = 'abcd1234';
 	user.emailAddress = 'j@j.com';
-	user.passwordHash = 'xyz';
+	user.password = 'xyz';
 
 	beforeEach(angular.mock.module('authenticate', function($provide) {
 		User = {
@@ -36,8 +36,8 @@ describe('authenticate', function () {
 
 		authUser = Authenticate.login(user);
 
-		expect(User.get).toHaveBeenCalledWith({emailAddress: user.emailAddress, passwordHash: user.passwordHash}, jasmine.any(Function), jasmine.any(Function))
-		// TODO expect(User.get).toHaveBeenCalledWith({emailAddress: user.emailAddress, passwordHash: user.passwordHash})
+		expect(User.get).toHaveBeenCalledWith({emailAddress: user.emailAddress, password: user.password}, jasmine.any(Function), jasmine.any(Function))
+		// TODO expect(User.get).toHaveBeenCalledWith({emailAddress: user.emailAddress, password: user.password})
 		expect(authUser.id).toBeUndefined();
 		deferred.resolve(user);
 		$rootScope.$apply();
@@ -62,7 +62,7 @@ describe('authenticate', function () {
 	// 	var isItDone = false;
 	// 	runs(function() {
 	// 		authUser = Authenticate.login(user);
-	// 		expect(User.get).toHaveBeenCalledWith({emailAddress: user.emailAddress, passwordHash: user.passwordHash}, jasmine.any(Function), jasmine.any(Function));
+	// 		expect(User.get).toHaveBeenCalledWith({emailAddress: user.emailAddress, password: user.password}, jasmine.any(Function), jasmine.any(Function));
 	// 		expect(authUser.id).toBeUndefined();
 	// 	});
 	// 	promise.then(function(value) {
