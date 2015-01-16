@@ -1,0 +1,3 @@
+[submodule "wiki"]
+	path = wiki
+	url = ssh://54b3fc4e5973caf023000047@wiki-jwgc.rhcloud.com/~/git/wiki.git/
