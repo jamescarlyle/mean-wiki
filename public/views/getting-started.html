@@ -1,0 +1,23 @@
+<!-- getting started page -->
+<h1><span class="glyphicon glyphicon-play" /></span> What is Mean Wiki?</h1>
+<div class="panel panel-primary">
+	<div class="panel-body">
+	<p class="lead">Mean Wiki allows you to create a set of personal Wiki pages that link to each other.</p>
+	<p>Mean Wiki pages are stored within your browser (using &quot;local storage&quot;), allowing you to work offline.</p>
+	<p>Mean Wiki pages are also stored on a remote server, but protected so that only you can see them. This means that you can access them from a different device, for example your phone or tablet. We&apos;re working hard to ensure that it&apos;s easy to synchronise changes with the copy of the pages on the server.</p>
+	<p class="lead">Start your Wiki by following these steps:</p>
+	<ol>
+		<li>Enter some text in the sandbox below.</li>
+		<li>Link to a new page that you wish to create by typing its names using 2 or more words joined together and with the first letter capitalised, like HomePage or ToDoList. This will automatically create a link.</li>
+		<li>If the new page hasn&apos;t yet been edited, a <span class="glyphicon glyphicon-flag"></span> flag will appear next to the name link.</li>
+		<li>Click on the link, navigate to the page, and enter some content using further name links if more pages are needed.</li>
+		<li>After you have finished editing the page, click on the Save button and the page will be saved locally and remotely.</li>
+	</ol>
+	<p class="lead">Sandbox</p>
+	<p><textarea class="form-control" style="border-style:none;background-color:#fcf8e3;padding:15px;" 
+	ng-model="sandbox" rows="3" placeholder="Start typing in the sandbox - try creating a first page by typing a name like HomePage and then clicking on the link in the preview area below"></textarea></p>
+	<p class="lead">Preview</p>
+	<p><div class="well" ng-bind-html="sandbox | wikify"></div>
+	<p>Mean Wiki was built using Mongo, Express, Angular.js and Node - hence the acronym that forms part of the name. &quot;Wiki&quot; means &quot;quick&quot; in Hawaiian and the Wiki goal is that it is quick to edit the web.</p>
+	</div>
+</div>
