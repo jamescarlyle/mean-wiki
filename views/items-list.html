@@ -1,0 +1,27 @@
+<!-- list of items -->
+<h1><span class="glyphicon glyphicon-th-list" /></span> Mean Wiki : Item List</h1>
+<div ng-show="opStatus" ng-class="'alert alert-' + opStatus" role="alert">
+	<strong>{{opStatus}}</strong> {{opMessage}}
+</div>
+<div class="panel panel-default">
+	<div class="panel-heading clearfix">
+		<div class="pull-left">
+			<p>number of items : <span class="badge">{{items.length}}</span></p>
+		</div>
+		<div class="pull-right">
+			<button type="button" class="btn btn-primary" ng-disabled="!online" ng-click="refreshItems()">refresh <span class="glyphicon glyphicon-refresh"/> </button>
+		</div>
+	</div>
+	<div class="panel-body">
+		<p><input class="form-control" ng-model="searchTerm" placeholder="search for items" /></p>
+ 		<div ng-repeat="(name, summary) in items | filter:searchTerm track by name">
+			<h2 style="display:inline">
+				<small>
+				<span ng-class="'glyphicon glyphicon-' + summary.syncStatus.status"></span>
+				</small>
+				<a href="#/{{summary.schema}}/{{summary.name}}">{{name}}</a>
+			</h2>
+			<p class="pull-right" style="display:inline">{{summary.syncStatus.message}}</p>
+		</div>
+	</div>
+</div>
