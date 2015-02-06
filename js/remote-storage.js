@@ -2,7 +2,7 @@ angular.module('remoteStorage', ['resources'])
 // service for Items
 .service('RemoteStorage', ['Item', 'Message', '$rootScope', function(Item, Message, $rootScope) {
 	// the function is the constructor - return an map of function names and the function provided
-	var store = function(resourceItem) {
+	var store = function(resourceItem, callback) {
 		if ($rootScope.online && resourceItem.user_id) {
 			// hold the previous updated timestamp, in case we need to revert to it in the event of failure
 			var previousServer = resourceItem.serverUpdate;
@@ -20,6 +20,9 @@ angular.module('remoteStorage', ['resources'])
 				// roll back the server update as update did not go through
 				resourceItem.serverUpdate = previousServer;
 			})
+			.finally(function() {
+				callback(resourceItem);
+			});
 		}
 	};
 	this.store = store;
@@ -42,18 +45,18 @@ angular.module('remoteStorage', ['resources'])
 		// this returns a promise
 		return Item.queryModifiedSince(user_id, schema, modifiedSince);
 	};
-	$rootScope.$on('localStorageStored', function(event, data) {
-		// listen for local storage events and replicate remotely
-		if ($rootScope.online && data.user_id) {
-			// if online and logged in, store, with an event so that local storage updates with serverUpdate time
-			store(data, true);
-		}
-	});	
-	$rootScope.$on('localStorageRemoved', function(event, data) {
-		// listen for local storage events and replicate remotely
-		if ($rootScope.online) {
-			remove(data, true);
-		}
-	});
+	// $rootScope.$on('localStorageStored', function(event, data) {
+	// 	// listen for local storage events and replicate remotely
+	// 	if ($rootScope.online && data.user_id) {
+	// 		// if online and logged in, store, with an event so that local storage updates with serverUpdate time
+	// 		store(data, true);
+	// 	}
+	// });	
+	// $rootScope.$on('localStorageRemoved', function(event, data) {
+	// 	// listen for local storage events and replicate remotely
+	// 	if ($rootScope.online) {
+	// 		remove(data, true);
+	// 	}
+	// });
 }])
 ;

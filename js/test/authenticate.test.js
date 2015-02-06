@@ -3,7 +3,6 @@ describe('authenticate', function () {
 
 	var Authenticate, Message, $q, $rootScope, User;
 	var user = {};
-	user.name = 'james carlyle';
 	user.id = 'abcd1234';
 	user.emailAddress = 'j@j.com';
 	user.password = 'xyz';
@@ -36,7 +35,7 @@ describe('authenticate', function () {
 
 		authUser = Authenticate.login(user);
 
-		expect(User.get).toHaveBeenCalledWith({emailAddress: user.emailAddress, password: user.password}, jasmine.any(Function), jasmine.any(Function))
+		expect(User.get).toHaveBeenCalledWith({emailAddress: user.emailAddress}, jasmine.any(Function), jasmine.any(Function))
 		// TODO expect(User.get).toHaveBeenCalledWith({emailAddress: user.emailAddress, password: user.password})
 		expect(authUser.id).toBeUndefined();
 		deferred.resolve(user);

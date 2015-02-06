@@ -14,10 +14,6 @@
 		<form name="form" role="form">
 			<fieldset>
 				<div class="form-group">
-					<label for="name">name</label>
-					<input type="text" class="form-control" id="name" ng-model="user.name" placeholder="your name">
-				</div>
-				<div class="form-group">
 					<label for="emailAddress">email address</label>
 					<input type="email" class="form-control" id="emailAddress" name="emailAddress" ng-model="user.emailAddress" required placeholder="email address">
 					<span class="error" ng-show="form.emailAddress.$error.required">your email address is required!</span>
@@ -25,13 +21,13 @@
 				</div>
 				<div class="form-group">
 					<label for="password">password</label>
-					<input type="text" class="form-control" id="password" name="password" ng-model="user.password" required placeholder="password">
+					<input type="password" class="form-control" id="password" name="password" ng-model="user.password" required placeholder="password">
 					<span class="error" ng-show="form.password.$error.required">your password is required!</span>
 				</div>
 			</fieldset>
 				<div class="form-group">
 					<label for="password">confirm password</label>
-					<input type="text" class="form-control" id="passwordConfirm" ng-model="user.passwordConfirm" placeholder="confirm password">
+					<input type="password" class="form-control" id="passwordConfirm" ng-model="user.passwordConfirm" placeholder="confirm password">
 				</div>
 			</fieldset>
 			<button type="button" class="btn btn-warning" ng-click="saveUser()">save</button>

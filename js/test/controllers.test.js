@@ -22,6 +22,9 @@ describe('controllers', function () {
 		getModifiedSince: function() {return 0},
 		setModifiedSince: function() {}
 	};
+	var syncLocalRemoteMock = {
+		refreshItems: function() {}
+	};
 	var locationMock;
 	var itemMock = {};
 	itemMock.schema = 'items';
@@ -41,7 +44,7 @@ describe('controllers', function () {
 			$scope: $scope, $rootScope: $rootScope, $routeParams: routeParamsMock, $location: {}, LocalStorage: localStorageMock
 		});
 		ItemListCtrl = $controller('ItemListCtrl', {
-			$scope: $scope, $rootScope: $rootScope, Configuration: configurationMock, RemoteStorage: remoteStorageMock, LocalStorage: localStorageMock
+			$scope: $scope, $rootScope: $rootScope, Configuration: configurationMock, RemoteStorage: remoteStorageMock, LocalStorage: localStorageMock, SyncLocalRemote: syncLocalRemoteMock
 		});
 	}));
 
@@ -68,51 +71,13 @@ describe('controllers', function () {
 	});
 
 	it('should save an item', function() {
+		spyOn(window.Date, 'now').and.callFake(function() {
+			return 2345;
+		});
 		spyOn(localStorageMock, 'store').and.callThrough();
+		$rootScope.online = true;
 		$scope.item = itemMock;
 		$scope.saveItem();
-		expect(localStorageMock.store).toHaveBeenCalledWith({ schema : 'items', name : '#todo', id : 'abcd1234', user_id : 'abcd1234', clientUpdate : itemMock.clientUpdate, serverUpdate : 5678, content : 'hello world' }, true);
+		expect(localStorageMock.store).toHaveBeenCalledWith({ schema : 'items', name : '#todo', id : 'abcd1234', user_id : 'abcd1234', clientUpdate : 2345, serverUpdate : 5678, content : 'hello world' }, true);
 	});
-
-	it('should refresh items where the remote item has been updated most recently', inject(function($q) {
-		var deferred = $q.defer();
-		spyOn(remoteStorageMock, 'retrieveModifiedSince').and.returnValue({$promise: deferred.promise});
-		// could build a more sophisticated localStorageMock, that returned one of a number of values
-		spyOn(localStorageMock, 'retrieveByName').and.returnValue({serverUpdate: 1234, clientUpdate: 5678});
-		spyOn(localStorageMock, 'store');
-		spyOn($rootScope, '$emit');
-		// test 1 - server item more recently updated than client's recognition of server, so update serverUpdate value on client
-		$scope.refreshItems();
-		deferred.resolve([{name: '#todo', serverUpdate: 9999}]);
-		$rootScope.$digest()
-		expect(remoteStorageMock.retrieveModifiedSince).toHaveBeenCalled();
-		expect(localStorageMock.store).toHaveBeenCalledWith({ serverUpdate : 9999, clientUpdate : 5678 }, false);
-	}));
-
-	it('should refresh items where the local item has been refreshed most recently', inject(function($q) {
-		var deferred = $q.defer();
-		spyOn(remoteStorageMock, 'retrieveModifiedSince').and.returnValue({$promise: deferred.promise});
-		// could build a more sophisticated localStorageMock, that returned one of a number of values
-		spyOn(localStorageMock, 'retrieveByName').and.returnValue({serverUpdate: 1234, clientUpdate: 5678});
-		spyOn($rootScope, '$emit');
-		// test 2 - client has correct view of server update, but client has been updated more recently offline
-		$scope.refreshItems();
-		deferred.resolve([{name: '#todo', serverUpdate: 1234}]);
-		$rootScope.$digest()
-		expect(remoteStorageMock.retrieveModifiedSince).toHaveBeenCalled();
-	}));
-
-	it('should add local items where the item exists remotely but not locally', inject(function($q) {
-		var deferred = $q.defer();
-		spyOn(remoteStorageMock, 'retrieveModifiedSince').and.returnValue({$promise: deferred.promise});
-		spyOn(localStorageMock, 'retrieveByName').and.returnValue({name: '#todo'});
-		spyOn(localStorageMock, 'store');
-		$scope.refreshItems();
-		deferred.resolve([{name: '#todo', serverUpdate: 9999}]);
-		$rootScope.$digest()
-		expect(remoteStorageMock.retrieveModifiedSince).toHaveBeenCalled();
-		expect(localStorageMock.store).toHaveBeenCalledWith({name: '#todo', serverUpdate : 9999}, false);
-		expect(Object.keys($scope.items).length).toEqual(1);
-		expect(Object.keys($scope.items)).toEqual(['#todo']);
-	}));
 });

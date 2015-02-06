@@ -1,17 +1,15 @@
 'use strict';
 
 describe('localStorage', function () {
-	var LocalStorage;
-	var date = {};
-	date.now = function now() {
-		return 1234;
-    };
-	var item = {};
-	item.name = '#todo';
-	item.id = 'abcd1234';
-	item.user_id = '1234abcd';
-	item.serverUpdate = 5678;
-	item.content = 'hello world';
+	var LocalStorage, RemoteStorage, Message;
+	var item = {
+		name: '#todo',
+		id: 'abcd1234',
+		user_id: '1234abcd',
+		clientUpdate: 1234,
+		serverUpdate: 5678,
+		content: 'hello world'
+	};
 	Object.defineProperties(item, {
 		// determine schema from name: curly brackets define object with key/value properties, array specifies getter for key
 		'schema': { get : function() { return {'#':'items','@':'people'}[this.name.charAt(0)]; } },
@@ -52,53 +50,54 @@ describe('localStorage', function () {
 	});
 
 	beforeEach(function() {
-		// TODO remove dependency of local storage on resources and remote storage
-		var MessageMock = { };
-		var resourcesMock = { };
-		var remoteStorageMock = {
-			// TODO these mock methods are not needed, since the remote storage instance is never called from local storage
-			store: function(resourceItem, raiseEvent) {
-			},
-			remove: function(resourceItem) {
-			}
-		};
-		module(function($provide){
-			$provide.value('Message', MessageMock);
-			$provide.value('resources', resourcesMock);
-			$provide.value('remoteStorage', remoteStorageMock);
+		module('localStorage');
+		module(function($provide) {
+			$provide.value('RemoteStorage', {
+				store: function(resourceItem, callback) { callback(resourceItem); }
+			});
+			$provide.value('Message', {
+				success: function(messageString) { }
+			});
 		});
-    });
-	beforeEach(angular.mock.module('localStorage'))
-
-	beforeEach(angular.mock.inject(function(_LocalStorage_) {
-		LocalStorage = _LocalStorage_;
-	}));
+		inject(function(_LocalStorage_, _RemoteStorage_, _Message_) {
+			LocalStorage = _LocalStorage_;
+			RemoteStorage = _RemoteStorage_;
+			Message = _Message_;
+		});
+	});
 
 	// could also inject(function(LocalStorage) instead of funtion()
 	it('should have a LocalStorage singleton', function() {
 		expect(LocalStorage).toBeDefined;
 	});
 
-	it('should store an item which doesn\'t already exist', function () {
-		spyOn(window.Date, 'now').and.callFake(function() {
-			return 1234;
-		});
+	it('should store an item locally offline which doesn\'t already exist', function () {
+		// localStorage is a local machine instance, i.e. not the service
 		localStorage.removeItem('#todo');
 		expect(localStorage['#todo']).toBeUndefined;
-		LocalStorage.store(item);
-		expect(localStorage['#todo']).toBe('{"id":"abcd1234","clientUpdate":5678,"serverUpdate":5678,"content":"hello world"}');
+		LocalStorage.store(item, false);
+		expect(localStorage['#todo']).toBe('{"id":"abcd1234","clientUpdate":1234,"serverUpdate":5678,"content":"hello world"}');
+	});
+
+	it('should store an item locally and also try and store on server, which doesn\'t already exist', function () {
+		// localStorage is a local machine instance, i.e. not the service
+		localStorage.removeItem('#todo');
+		expect(localStorage['#todo']).toBeUndefined;
+		spyOn(RemoteStorage, 'store').and.callThrough();
+		spyOn(LocalStorage, 'updateLocalStorage').and.callThrough();
+		LocalStorage.store(item, true);
+		expect(RemoteStorage.store).toHaveBeenCalledWith(item, LocalStorage.updateLocalStorage);
+		expect(LocalStorage.updateLocalStorage).toHaveBeenCalledWith({ name: '#todo', id: 'abcd1234', user_id: '1234abcd', clientUpdate: 1234, serverUpdate: 5678, content: 'hello world' });
+		expect(localStorage['#todo']).toBe('{"id":"abcd1234","clientUpdate":1234,"serverUpdate":5678,"content":"hello world"}');
 	});
 
 	it('should update an item which already exists', function () {
-		item.clientUpdate = 0;
-		spyOn(window.Date, 'now').and.callFake(function() {
-			return 1234;
-		});
-		LocalStorage.store(item);
+		LocalStorage.store(item, false);
 		expect(localStorage['#todo']).toBe('{"id":"abcd1234","clientUpdate":1234,"serverUpdate":5678,"content":"hello world"}');
 		item.content = 'new content';
+		item.clientUpdate = 2345;
 		LocalStorage.store(item);
-		expect(localStorage['#todo']).toBe('{"id":"abcd1234","clientUpdate":1234,"serverUpdate":5678,"content":"new content"}');
+		expect(localStorage['#todo']).toBe('{"id":"abcd1234","clientUpdate":2345,"serverUpdate":5678,"content":"new content"}');
 	});
 
 	it('should retrieve an item by name', function () {
@@ -113,16 +112,16 @@ describe('localStorage', function () {
 	});
 
 	it('should retrieve an item by schema', function () {
-		LocalStorage.store(item);
+		LocalStorage.store(item, false);
 		var testItem = LocalStorage.retrieveBySchema('items', 'todo');
 		expect(testItem.asString).toBe(item.asString);
 	});
 
 	it('should retrieve a list of names, schema, syncStatus for all items', function () {
-		LocalStorage.store(item);
+		LocalStorage.store(item, false);
 		var testItems = LocalStorage.retrieveAll();
-		expect(Object.keys(testItems).length).toBe(1);
-		var testItem = testItems[item.name];
+		expect(testItems.length).toBe(1);
+		var testItem = testItems[0];
 		expect(testItem.schema).toBe(item.schema);
 		expect(testItem.name).toBe(item.name.slice(1));
 		expect(testItem.syncStatus.status).toBe(item.syncStatus.status);
@@ -130,7 +129,7 @@ describe('localStorage', function () {
 	});
 
 	it('should remove an item stored', function () {
-		LocalStorage.store(item);
+		LocalStorage.store(item, false);
 		LocalStorage.remove(item);
 		var retrievedItem = LocalStorage.retrieveBySchema('items', 'todo');
 		expect(JSON.stringify(retrievedItem)).toBe('{"name":"#todo"}');
