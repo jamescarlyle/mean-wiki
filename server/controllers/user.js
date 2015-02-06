@@ -1,5 +1,6 @@
 // load required packages
 var User = require('../models/user');
+var extend = require('util')._extend;
 
 // create endpoint /api/users for POST
 exports.postUser = function(req, res) {
@@ -40,12 +41,21 @@ exports.getUsers = function(req, res) {
 exports.putUser = function(req, res) {
 	console.log('http PUT for User called with ' + JSON.stringify(req.body));
 	// mongoose will automatically remove the id from the body in strict mode
-	User.findOneAndUpdate({ _id : req.params.id}, req.body, function(err, user) {
+	User.findById(req.params.id, function(err, user) {
+		// need to separate find and save, otherwise pre-save will not work (needed to hash password)
 		if (err) {
 			res.send(err);
 		} else {
-			res.json(user);
-		}
+			// use node's util.extend method
+			extend(user, req.body);
+			user.save(function(err) {
+				if (err) {
+					res.send(err);
+				} else {
+					res.json(user);
+				};
+			});
+		};
 	});
 };
 

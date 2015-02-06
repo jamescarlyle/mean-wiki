@@ -34,6 +34,7 @@ module.exports = function(config) {
 			'js/user-storage.js',
 			'js/authenticate.js',
 			'js/controllers.js',
+			'js/sync-local-remote.js',
 			// test files
 			'js/test/app.test.js',
 			'js/test/config.test.js',
@@ -46,6 +47,7 @@ module.exports = function(config) {
 			'js/test/authenticate.test.js',
 			'js/test/controllers.test.js',
 			'js/test/authenticate-controller.test.js',
+			'js/test/sync-local-remote.test.js'
 		],
 
 		// list of files to exclude

@@ -1,22 +1,23 @@
 {
-	"name": "OpenShift-Sample-App",
+	"name": "Mean-Wiki server application",
 	"version": "1.0.0",
-	"description": "OpenShift Sample Application",
+	"description": "Server for the Mean-Wiki application",
 	"keywords": [
-		"OpenShift",
-		"Node.js",
-		"application",
-		"openshift"
+		"Wiki",
+		"personal",
+		"notes",
+		"todo",
+		"address"
 	],
 	"author": {
-		"name": "OpenShift",
-		"email": "ramr@example.org",
-		"url": "http://www.openshift.com/"
+		"name": "James Carlyle",
+		"email": "jwgcarlyle@gmail.com",
+		"url": "http://www.akimoto.co/"
 	},
-	"homepage": "http://www.openshift.com/",
+	"homepage": "http://www.note.it/", // notabene.co, nb.co, blocknote, blocktext
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/openshift/origin-server"
+		"url": "https://github.com/jamescarlyle/mean-wiki/"
 	},
 	"engines": {
 		"node": ">= 0.6.0",
@@ -24,12 +25,12 @@
 	},
 	"dependencies": {
 		"express"				: "latest"
-	,	"body-parser" 	: "latest"
-	,	"mongodb" 			: "latest"
-	,	"mongoose" 			: "latest"
-	,	"passport" 			: "latest"
-	,	"passport-http"	: "latest"
-	,	"bcrypt-nodejs"	: "latest"
+	,	"body-parser" 			: "latest"
+	,	"mongodb" 				: "latest"
+	,	"mongoose" 				: "latest"
+	,	"passport" 				: "latest"
+	,	"passport-http"			: "latest"
+	,	"bcrypt-nodejs"			: "latest"
 	},
 	"devDependencies": {},
 	"bundleDependencies": [],

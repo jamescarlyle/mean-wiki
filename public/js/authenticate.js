@@ -1,22 +1,9 @@
 angular.module('authenticate', ['resources'])
 // service for User authentication
-.service('Authenticate', ['User', 'Message', function(User, Message) {
-	// this.login = function (user) {
-	// 	User.get({emailAddress: user.emailAddress, password: user.password})
-	// 	.then(function () {
-	// 		if (user.id) {
-	// 			Message.success('You logged in successfully');
-	// 		} else {
-	// 			Message.failure('Your user credentials do not match. Please try again');
-	// 			// TODO bug - should resolve the promise as failed here, then the calling .then() would not be executed
-	// 		};
-	// 	})
-	// 	.catch(function () {
-	// 		Message.failure('There was a problem. Please try again');
-	// 	});
-	// };
+.service('Authenticate', ['User', 'Message', '$window', function(User, Message, $window) {
 	this.login = function(user) {
-		return User.get({emailAddress: user.emailAddress, password: user.password}, this.successMessage, this.failureMessage);
+		// request user object and force that to require Basic authentication
+		return User.get({emailAddress: user.emailAddress}, this.successMessage, this.failureMessage);
 	};
 	this.logout = function() {
 		Message.success('You logged out successfully');
@@ -26,12 +13,43 @@ angular.module('authenticate', ['resources'])
 		if (user.id) {
 			Message.success('You logged in successfully');
 		} else {
-			Message.failure('You failed to log in');
+			Message.failure('Your login was not successful. Please try again');
 			// TODO bug - should resolve the promise as failed here, then the calling .then() would not be executed
 		}
 	};
 	this.failureMessage = function() {
 		Message.failure('There was a problem. Please try again');
 	};
+	this.encode = function(string) {
+		// encode the String
+		// return Base64.encode(string);
+		return $window.btoa(string);
+	}
+	this.utfEncode = function(string) {
+		string = string.replace(/\r\n/g, "\n");
+		var utftext = "";
+
+		for (var n = 0; n < string.length; n++) {
+
+			var c = string.charCodeAt(n);
+
+			if (c < 128) {
+				utftext += String.fromCharCode(c);
+			}
+			else if ((c > 127) && (c < 2048)) {
+				utftext += String.fromCharCode((c >> 6) | 192);
+				utftext += String.fromCharCode((c & 63) | 128);
+			}
+			else {
+				utftext += String.fromCharCode((c >> 12) | 224);
+				utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+				utftext += String.fromCharCode((c & 63) | 128);
+			}
+
+		}
+
+		return utftext;
+	}
+ 
 }])
 ;

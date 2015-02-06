@@ -4,16 +4,17 @@ var bcrypt = require('bcrypt-nodejs');
 var Schema  = mongoose.Schema;
 // item schema
 var UserSchema   = new Schema({
-	name: String,
 	emailAddress: {type: String, unique: true, required: true},
 	password: {type: String, required: true},
 	serverUpdate: { type: Date, default: Date.now }
 }, {
 	toJSON: {
-		// take the internal _id and represent it externally as "id": left untransformed, mongoose does not ignore _id in PUT body, and mongo complains on save
 		transform: function(doc, ret, options) {
+			// take the internal _id and represent it externally as "id": left untransformed, mongoose does not ignore _id in PUT body, and mongo complains on save
 			ret.id = ret._id;
 			delete ret._id;
+			// delete the password hash - no need to ever expose it
+			delete ret.password;
 		}
 	}
 });

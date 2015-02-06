@@ -1,13 +1,14 @@
 // load required packages
 var Item = require('../models/item');
-
+var Person = require('../models/person');
 
 // create endpoint for /users/123/items/abc for all methods
 exports.allItem = function(req, res, next) {
 	console.log('http ' + req.method + ' called with ' + req.url);
 	console.log('headers ' + JSON.stringify(req.headers));
 	req.schema = (req.params.schema == 'items' ? Item : Person);
-	req.schema.findById(req.params.id, function(err, item) {
+	// use req.user (set during authentication phase) to restrict query, to enforce authorisation
+	req.schema.findOne({ user_id : req.user.id, _id : req.params.id }, function(err, item) {
 		if (err) {
 			res.send(err);
 		} else if (!item) {
@@ -32,6 +33,7 @@ exports.allItems = function(req, res, next) {
 
 // create endpoint for /users/123/items/abc for HEAD
 exports.headItem = function(req, res) {
+	// item earlier retrieved during allItem step
 	if (!req.headers['if-modified-since'] || req.item.serverUpdate > req.headers['if-modified-since']) {
 		res.send();
 	} else {
@@ -46,7 +48,8 @@ exports.putItem = function(req, res) {
 	console.log('body ' + JSON.stringify(req.body));
 	console.log('id' + req.params.id);
 	req.schema = (req.params.schema == 'items' ? Item : Person);
-	req.schema.findOneAndUpdate({ _id : req.params.id}, req.body, function(err, item) {
+	// use the req.user saved during the authentication step - this ensures that only items belonging to the user can be updated, even if the user is authenticated
+	req.schema.findOneAndUpdate({ user_id : req.user.id, _id : req.params.id }, req.body, function(err, item) {
 		if (err) {
 			res.send(err);
 		} else {

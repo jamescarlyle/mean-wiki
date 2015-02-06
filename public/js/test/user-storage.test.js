@@ -4,7 +4,6 @@ describe('userStorage', function () {
 	var UserStorage, $q, $rootScope, User, Message;
 	var user = {};
 	user.id = 'abcd1234';
-	user.name = 'joe bloggs';
 	user.emailAddress = 'jb@gmail.com';
 	user.password = 'helloworld';
 
@@ -36,7 +35,7 @@ describe('userStorage', function () {
 		deferred.resolve(user);
 		$rootScope.$apply();
 		// should fetch the resource
-		expect(value.name).toBe(user.name);
+		expect(value.emailAddress).toBe(user.emailAddress);
 		// now check that the success message was sent
 		expect(User.get).toHaveBeenCalledWith({ id : 'abcd1234' });
 	});
@@ -56,7 +55,7 @@ describe('userStorage', function () {
 		deferred.resolve(user);
 		$rootScope.$apply();
 		// should fetch the resource
-		expect(value.name).toBe(user.name);
+		expect(value.emailAddress).toBe(user.emailAddress);
 		// now check that the success message was sent
 		expect(User.get).toHaveBeenCalledWith({ emailAddress : 'jb@gmail.com' });
 	});

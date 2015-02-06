@@ -16,7 +16,7 @@
 					<a href="#/"><span class="glyphicon glyphicon-play" /></span> getting started</a> |
 					<span ng-if="currentUser">
 						<a href="#/account/"><span class="glyphicon glyphicon-link" /></span> account</a>
-						<a ng-click="logout()"><span class="glyphicon glyphicon-log-out" /></span> logout</a> (logged in as {{currentUser.name}})
+						<a ng-click="logout()"><span class="glyphicon glyphicon-log-out" /></span> logout</a> (logged in as {{currentUser.emailAddress}})
 					</span>
 					<span ng-if="!currentUser">
 						<a href="#/account/"><span class="glyphicon glyphicon-link" /></span> signup</a> or
@@ -42,4 +42,5 @@
 <script src="js/comparison.js"></script>
 <script src="js/authenticate.js"></script>
 <script src="js/controllers.js"></script>
+<script src="js/sync-local-remote.js"></script>
 </html>
