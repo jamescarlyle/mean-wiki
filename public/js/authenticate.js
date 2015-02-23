@@ -22,7 +22,6 @@ angular.module('authenticate', ['resources'])
 	};
 	this.encode = function(string) {
 		// encode the String
-		// return Base64.encode(string);
 		return $window.btoa(string);
 	}
 	this.utfEncode = function(string) {

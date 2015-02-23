@@ -17,19 +17,23 @@ var app = angular.module('app', [
 		templateUrl: '/views/user.html',
 		controller: 'UserCtrl'
 	}).
+	when('/authenticate/header', {
+		templateUrl: '/views/auth-result.html',
+		controller: 'AuthTokenCtrl'
+	}).
 	when('/:schema/:name', {
 		templateUrl: function(params) { return '/views/' + params.schema + '-detail.html' },
 		controller: 'ItemDetailCtrl'
 	}).
-	when('/authenticate/', {
+	when('/authenticate', {
 		templateUrl: '/views/authenticate.html',
 		controller: 'AuthenticateCtrl'
 	}).
-	when('/account/', {
+	when('/account', {
 		templateUrl: '/views/user.html',
 		controller: 'UserCtrl'
 	}).
-	when('/:schema/', {
+	when('/:schema', {
 		templateUrl: function(params) { return '/views/' + params.schema + '-list.html' },
 		controller: 'ItemListCtrl'
 	}).
@@ -45,7 +49,6 @@ var app = angular.module('app', [
 		$scope.currentUser = user;
 	};
 })
-// set up event listeners
 .run(['$window', '$rootScope', function($window, $rootScope) {
 	$rootScope.online = navigator.onLine;
 	$window.addEventListener('offline', function () {
@@ -69,3 +72,27 @@ var app = angular.module('app', [
 	});
 }])
 ;
+	// when('/authenticate/header', {
+	// 	resolve: {
+	// 		auth: function(authService, $routeParams, $route) { 
+	// 			alert( authService.authenticateHeader($route.current.params) );
+	// 		}
+	// 	},
+	// 	redirectTo: function (routeParams, path, search) {
+	// 		return "/items";
+	// 	}
+	// }).
+// .factory('authService', function($http, $location, Authenticate) {
+//     return {
+//         authenticateHeader: function(params) {
+// 			$http.defaults.headers.common['Authorization'] = 'Bearer ' + params.sub;
+// 			Authenticate.login({emailAddress: params.email}).$promise.then(function (user) {
+// 				// this scope method is on the parent  ApplicationCtrl
+// 				// $scope.setCurrentUser(user);
+// 				console.log(user);
+// 			});
+//            return "Hello World!";
+//         }
+//     };
+// })
+// set up event listeners

@@ -2,6 +2,8 @@
 var passport = require('passport');
 var BasicStrategy = require('passport-http').BasicStrategy;
 var User = require('../models/user');
+var https = require('https');
+var querystring = require('querystring');
 
 passport.use(new BasicStrategy(
 	function(username, password, callback) {
@@ -22,3 +24,108 @@ passport.use(new BasicStrategy(
 ));
 
 exports.isAuthenticated = passport.authenticate('basic', { session : false });
+
+exports.google = function(req, res, next) {
+	res.redirect('https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=789125908600-1hl0btjc4kds57i7leku9qqs3ru4luic.apps.googleusercontent.com&redirect_uri=http://localhost:8080/wiki/authenticate/authCode/&scope=openid email&state=1234');
+};
+
+exports.authenticate = function(req, res, next) {
+	var authHeader = req.get('Authorization');
+	console.log(authHeader);
+
+	if (authHeader === undefined) {
+		res.statusCode = 401;
+		res.end('Unauthorized');
+	} else {
+		next();
+	}
+};
+
+exports.authCode = function(req, res, next) {
+	var authCode = req.query.code;
+	var postData = querystring.stringify({
+		'grant_type': 'authorization_code',
+		'code': authCode,
+		'client_id' : process.env.GOOGLE_CLIENT_ID,
+		'client_secret': process.env.GOOGLE_CLIENT_SECRET,
+		'redirect_uri': 'http://localhost:8080/wiki/authenticate/authCode/'
+	});
+	var options = {
+		hostname: 'www.googleapis.com',
+		port: 443,
+		path: '/oauth2/v3/token',
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+	};
+
+	var tokenReq = https.request(options, function(response) {
+		var body = '';
+		response.on('data', function(chunk) {
+			body += chunk;
+		});
+		response.on('end', function() {
+			try {
+				var parsed = JSON.parse(body);
+				var buf = new Buffer(parsed.id_token.split('.')[1], 'base64');
+				var claim = JSON.parse(buf.toString());
+				res.redirect('http://localhost:8000/#/authenticate/header?' + querystring.stringify({
+					'sub': claim.sub,
+					'email': claim.email,
+				}));
+			} catch (err) {
+				console.error('Unable to parse response as JSON', err);
+			};			
+		});
+	}).on('error', function(err) {
+		console.error('error with the request:', err.message);
+	});
+
+	tokenReq.write(postData);
+	tokenReq.end();
+};
+
+// exports.facebook = function(req, res, next) {
+// 	res.redirect('https://www.facebook.com/dialog/oauth?response_type=code&client_id=1556759154606391&redirect_uri=http://localhost:8080/wiki/authenticate/authCode/&state=1234');
+// };
+
+// exports.processFacebookCode = function(req, res, next) {
+// 	var authCode = req.query.code;
+// 	var postData = querystring.stringify({
+// 		'code': authCode,
+// 		'client_id' : '1556759154606391',
+// 		'client_secret': '1d624986f107716d91d4241053427afa',
+// 		'redirect_uri': 'http://localhost:8080/wiki/authenticate/authCode/'
+// 	});
+// 	var options = {
+// 		hostname: 'graph.facebook.com/oauth/access_token',
+// 		port: 443,
+// 		path: '/oauth2/v3/token',
+// 		method: 'POST',
+// 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+// 	};
+
+// 	var tokenReq = https.request(options, function(response) {
+// 		var body = '';
+// 		response.on('data', function(chunk) {
+// 			body += chunk;
+// 		});
+// 		response.on('end', function() {
+// 			try {
+// 				var parsed = JSON.parse(body);
+// 				var buf = new Buffer(parsed.id_token.split('.')[1], 'base64');
+// 				var claim = JSON.parse(buf.toString());
+// 				res.redirect('http://localhost:8000/#/authenticate/header?' + querystring.stringify({
+// 					'sub': claim.sub,
+// 					'email': claim.email,
+// 				}));
+// 			} catch (err) {
+// 				console.error('Unable to parse response as JSON', err);
+// 			};			
+// 		});
+// 	}).on('error', function(err) {
+// 		console.error('error with the request:', err.message);
+// 	});
+
+// 	tokenReq.write(postData);
+// 	tokenReq.end();
+// };
