@@ -26,7 +26,7 @@ passport.use(new BasicStrategy(
 exports.isAuthenticated = passport.authenticate('basic', { session : false });
 
 exports.google = function(req, res, next) {
-	res.redirect('https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=789125908600-1hl0btjc4kds57i7leku9qqs3ru4luic.apps.googleusercontent.com&redirect_uri=http://localhost:8080/wiki/authenticate/authCode/&scope=openid email&state=1234');
+	res.redirect('https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=' + process.env.GOOGLE_CLIENT_ID + '&redirect_uri=http://localhost:8080/wiki/authenticate/authCode/&scope=openid email&state=1234');
 };
 
 exports.authenticate = function(req, res, next) {
@@ -92,8 +92,8 @@ exports.authCode = function(req, res, next) {
 // 	var authCode = req.query.code;
 // 	var postData = querystring.stringify({
 // 		'code': authCode,
-// 		'client_id' : '1556759154606391',
-// 		'client_secret': '1d624986f107716d91d4241053427afa',
+// 		'client_id' : process.env.FACEBOOK_CLIENT_ID,
+// 		'client_secret': process.env.FACEBOOK_SECRET_ID,
 // 		'redirect_uri': 'http://localhost:8080/wiki/authenticate/authCode/'
 // 	});
 // 	var options = {
