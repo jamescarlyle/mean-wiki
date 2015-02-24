@@ -31,10 +31,10 @@ describe('app module', function () {
 		// we could also load the page this way: module('.public/views/items-detail.html'); preprocessors: {// '**/*.html': ['ng-html2js']},
 		inject(function($route, $httpBackend) {
 			expect($route.current).toBeUndefined();
-			$httpBackend.expectGET('/views/items-detail.html').respond(200);
+			$httpBackend.expectGET('views/items-detail.html').respond(200);
 			$location.path('/items/todo');
 			$rootScope.$digest();
-			expect($route.current.templateUrl({schema: 'items'})).toBe('/views/items-detail.html');
+			expect($route.current.templateUrl({schema: 'items'})).toBe('views/items-detail.html');
 			expect($route.current.controller).toBe('ItemDetailCtrl');			
 		});
 	});
@@ -43,10 +43,10 @@ describe('app module', function () {
 		// we could also load the page this way: module('.public/views/items-detail.html'); preprocessors: {// '**/*.html': ['ng-html2js']},
 		inject(function($route, $httpBackend) {
 			expect($route.current).toBeUndefined();
-			$httpBackend.expectGET('/views/items-list.html').respond(200);
+			$httpBackend.expectGET('views/items-list.html').respond(200);
 			$location.path('/items');
 			$rootScope.$digest();
-			expect($route.current.templateUrl({schema: 'items'})).toBe('/views/items-list.html');
+			expect($route.current.templateUrl({schema: 'items'})).toBe('views/items-list.html');
 			expect($route.current.controller).toBe('ItemListCtrl');			
 		});
 	});
