@@ -14,31 +14,31 @@ var app = angular.module('app', [
 .config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 	$routeProvider.
 	when('/users/:emailAddress', {
-		templateUrl: '/views/user.html',
+		templateUrl: 'views/user.html',
 		controller: 'UserCtrl'
 	}).
 	when('/authenticate/header', {
-		templateUrl: '/views/auth-result.html',
+		templateUrl: 'views/auth-result.html',
 		controller: 'AuthTokenCtrl'
 	}).
 	when('/:schema/:name', {
-		templateUrl: function(params) { return '/views/' + params.schema + '-detail.html' },
+		templateUrl: function(params) { return 'views/' + params.schema + '-detail.html' },
 		controller: 'ItemDetailCtrl'
 	}).
 	when('/authenticate', {
-		templateUrl: '/views/authenticate.html',
+		templateUrl: 'views/authenticate.html',
 		controller: 'AuthenticateCtrl'
 	}).
 	when('/account', {
-		templateUrl: '/views/user.html',
+		templateUrl: 'views/user.html',
 		controller: 'UserCtrl'
 	}).
 	when('/:schema', {
-		templateUrl: function(params) { return '/views/' + params.schema + '-list.html' },
+		templateUrl: function(params) { return 'views/' + params.schema + '-list.html' },
 		controller: 'ItemListCtrl'
 	}).
 	when('/', {
-		templateUrl: '/views/getting-started.html'
+		templateUrl: 'views/getting-started.html'
 	}).
 	otherwise({
 		redirectTo: '/'
