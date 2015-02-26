@@ -8,5 +8,9 @@ angular.module('config', [])
 	this.setModifiedSince = function(serverUpdate) {
 		localStorage['$serverUpdate'] = (serverUpdate).toString(10);
 	};
+	this.getServerLocation = function() {
+		return localStorage['$serverLocation'] || 'http://wiki-jwgc.rhcloud.com:80/';
+	}
 })
+.constant('SERVER_ROOT','wiki/')
 ;

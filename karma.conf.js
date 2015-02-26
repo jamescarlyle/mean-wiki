@@ -24,6 +24,7 @@ module.exports = function(config) {
 			'lib/angular-resource.min.js',
 			// code files
 			'js/app.js',
+			'js/static.js',
 			'js/config.js',
 			'js/user-message.js',
 			'js/comparison.js',

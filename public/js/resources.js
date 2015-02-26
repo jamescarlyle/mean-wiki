@@ -1,12 +1,12 @@
-angular.module('resources', ['ngResource'])
+angular.module('resources', ['ngResource', 'static'])
 // service for Items
-.factory('User', ['$http', '$resource', function($http, $resource) { 
-	return $resource('http://localhost:8080/wiki/users/:id', {id:'@id'}, {
+.factory('User', ['$http', '$resource', 'SERVER_URL', function($http, $resource, SERVER_URL) { 
+	return $resource(SERVER_URL + 'users/:id', {id:'@id'}, {
 		update: { method: 'PUT' }
 	});
 }])
 // service for Items
-.factory('Item', ['$http', '$resource', function($http, $resource) { 
+.factory('Item', ['$http', '$resource', 'SERVER_URL', function($http, $resource, SERVER_URL) { 
 	var lastCheck = 0;
 	var getSyncStatus = function(clientUpdate, serverUpdate) {
 		if (!clientUpdate) {
@@ -24,7 +24,7 @@ angular.module('resources', ['ngResource'])
 		return {schema: getSchema(item.name), name: item.name.substr(1), syncStatus: getSyncStatus(item.clientUpdate, item.serverUpdate)};
 	}
 	// use the id of the object to pass as a query parameter in the appropriate placeholder, and parameterise the schema (without a default)
-	var Item = $resource('http://localhost:8080/wiki/users/:user_id/:schema/:id', {user_id: '@user_id', schema: '@schema', id:'@id'}, {
+	var Item = $resource(SERVER_URL + 'users/:user_id/:schema/:id', {user_id: '@user_id', schema: '@schema', id:'@id'}, {
 		update: { 
 			method: 'PUT'
 		},

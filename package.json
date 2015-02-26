@@ -15,7 +15,9 @@
   "scripts": {
     "test": "karma start karma.conf.js",
     "mongo": "sudo mongod --dbpath /var/lib/mongodb",
-    "gh-pages": "git subtree push --prefix public origin gh-pages"
+    "gh-pages": "git subtree push --prefix public origin gh-pages",
+    "static-dev": "handlebars public/js/static-dev.json < public/js/static.hbs > public/js/static.js",
+    "static-prod": "handlebars public/js/static-prod.json < public/js/static.hbs > public/js/static.js"
   },
   "repository": {
     "type": "git",
