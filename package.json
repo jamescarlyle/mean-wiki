@@ -1,38 +1,39 @@
 {
-  "name": "mean-wiki",
-  "version": "1.0.0",
-  "description": "A mean personal wiki",
-  "main": "karma.conf.js",
-  "directories": {
-    "test": "test"
-  },
-  "dependencies": {
-    "jasmine-core": "^2.1.3",
-    "karma-chrome-launcher": "^0.1.7",
-    "karma": "^0.12.31"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "test": "karma start karma.conf.js",
-    "mongo": "sudo mongod --dbpath /var/lib/mongodb",
-    "gh-pages": "git subtree push --prefix public origin gh-pages",
-    "static-dev": "handlebars public/js/static-dev.json < public/js/static.hbs > public/js/static.js",
-    "static-prod": "handlebars public/js/static-prod.json < public/js/static.hbs > public/js/static.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jamescarlyle/mean-wiki"
-  },
-  "keywords": [
-    "wiki",
-    "personal",
-    "note",
-    "postit"
-  ],
-  "author": "James Carlyle",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/jamescarlyle/mean-wiki/issues"
-  },
-  "homepage": "https://github.com/jamescarlyle/mean-wiki"
+	"name": "mean-wiki",
+	"version": "1.0.0",
+	"description": "A mean personal wiki",
+	"main": "karma.conf.js",
+	"directories": {
+		"test": "test"
+	},
+	"dependencies": {
+		"jasmine-core": "^2.1.3",
+		"karma-chrome-launcher": "^0.1.7",
+		"karma": "^0.12.31"
+	},
+	"devDependencies": {},
+	"scripts": {
+		"test": "karma start karma.conf.js",
+		"mongo": "sudo mongod --dbpath /var/lib/mongodb",
+		"gh-pages": "git subtree push --prefix public origin gh-pages",
+		"static-dev": "handlebars public/js/static-dev.json < public/js/static.hbs > public/js/static.js",
+		"static-prod": "handlebars public/js/static-prod.json < public/js/static.hbs > public/js/static.js",
+		"openshift": "git subtree push --prefix=server openshift master"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/jamescarlyle/mean-wiki"
+	},
+	"keywords": [
+		"wiki",
+		"personal",
+		"note",
+		"postit"
+	],
+	"author": "James Carlyle",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/jamescarlyle/mean-wiki/issues"
+	},
+	"homepage": "https://github.com/jamescarlyle/mean-wiki"
 }
