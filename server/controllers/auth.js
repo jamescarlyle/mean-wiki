@@ -26,7 +26,7 @@ passport.use(new BasicStrategy(
 exports.isAuthenticated = passport.authenticate('basic', { session : false });
 
 exports.google = function(req, res, next) {
-	res.redirect('https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=' + process.env.GOOGLE_CLIENT_ID + '&redirect_uri=http://localhost:8080/wiki/authenticate/authCode/&scope=openid email&state=1234');
+	res.redirect('https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=' + process.env.GOOGLE_CLIENT_ID + '&redirect_uri=' + process.env.SERVER_URL + 'authenticate/authCode/&scope=openid email&state=1234');
 };
 
 exports.authenticate = function(req, res, next) {
@@ -48,7 +48,7 @@ exports.authCode = function(req, res, next) {
 		'code': authCode,
 		'client_id' : process.env.GOOGLE_CLIENT_ID,
 		'client_secret': process.env.GOOGLE_CLIENT_SECRET,
-		'redirect_uri': 'http://localhost:8080/wiki/authenticate/authCode/'
+		'redirect_uri': process.env.SERVER_URL + 'authenticate/authCode/'
 	});
 	var options = {
 		hostname: 'www.googleapis.com',
@@ -68,7 +68,7 @@ exports.authCode = function(req, res, next) {
 				var parsed = JSON.parse(body);
 				var buf = new Buffer(parsed.id_token.split('.')[1], 'base64');
 				var claim = JSON.parse(buf.toString());
-				res.redirect('http://localhost:8000/#/authenticate/header?' + querystring.stringify({
+				res.redirect(process.env.CLIENT_URL + 'authenticate/header?' + querystring.stringify({
 					'sub': claim.sub,
 					'email': claim.email,
 				}));
