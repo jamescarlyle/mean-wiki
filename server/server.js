@@ -3,11 +3,6 @@ var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
 var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 var mongodb_url = process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://127.0.0.1:27017/';
 // note that process.env.GOOGLE_CLIENT_ID and process.env.GOOGLE_CLIENT_SECRET must also be set using e.g. rhc env set GOOGLE_CLIENT_ID=abcd1234
-// rhc env set GOOGLE_CLIENT_ID=http://wiki-jwgc.rhcloud.com:80/wiki/ --app wiki
-// rhc env set GOOGLE_CLIENT_SECRET=http://wiki-jwgc.rhcloud.com:80/wiki/ --app wiki
-// rhc env set SERVER_URL=http://wiki-jwgc.rhcloud.com:80/wiki/ --app wiki
-// rhc env set CLIENT_URL=http://jamescarlyle.github.io/mean-wiki/#/ --app wiki
-
 
 var db_name = 'wiki';
 
@@ -67,6 +62,7 @@ router.route('/users/:user/:schema')
 router.route('/users/:id')
 	.get(authController.isAuthenticated, userController.getUser)
 	.put(authController.isAuthenticated, userController.putUser)
+	.delete(authController.isAuthenticated, userController.deleteUser)
 ;
 
 router.route('/users')

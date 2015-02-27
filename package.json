@@ -13,12 +13,15 @@
 	},
 	"devDependencies": {},
 	"scripts": {
-		"test": "karma start karma.conf.js",
 		"mongo": "sudo mongod --dbpath /var/lib/mongodb",
-		"gh-pages": "git subtree push --prefix public origin gh-pages",
+		"test": "karma start karma.conf.js",
 		"static-dev": "handlebars public/js/static-dev.json < public/js/static.hbs > public/js/static.js",
 		"static-prod": "handlebars public/js/static-prod.json < public/js/static.hbs > public/js/static.js",
-		"openshift": "git subtree push --prefix=server openshift master"
+		"git-commit": "git commit -a",
+		"gh-pages": "git subtree push --prefix=public origin gh-pages",
+		"openshift-push": "git subtree push --prefix=server openshift master",
+		"openshift-tail": "ssh -t ????? 'tail */log*/*'",
+		"deploy-prod": "npm run static-prod && npm run git-commit && npm run gh-pages && npm run openshift"
 	},
 	"repository": {
 		"type": "git",

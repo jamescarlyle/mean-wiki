@@ -1,3 +1,7 @@
+// rhc env set GOOGLE_CLIENT_ID=???????? --app wiki
+// rhc env set GOOGLE_CLIENT_SECRET=???????? --app wiki
+// rhc env set SERVER_URL=http://wiki-jwgc.rhcloud.com:80/wiki/ --app wiki
+// rhc env set CLIENT_URL=http://jamescarlyle.github.io/mean-wiki/#/ --app wiki
 // load required packages
 var passport = require('passport');
 var BasicStrategy = require('passport-http').BasicStrategy;

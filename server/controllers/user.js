@@ -70,3 +70,14 @@ exports.getUser = function(req, res) {
 		}
 	});
 };
+// create endpoint for /users/123 for DELETE
+exports.deleteUser = function(req, res) {
+	console.log('http DELETE called for User resource ' + req.params.id);
+	User.findOneAndRemove(req.params.id, function(err, user) {
+		if (err) {
+			res.send(err);
+		} else {
+			res.json(user);
+		}
+	});
+};
