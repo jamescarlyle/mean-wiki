@@ -64,12 +64,9 @@ var controllers = angular.module('controllers', ['localStorage', 'remoteStorage'
 		$location.path('/items/');
 	};
 })
-.controller('AuthTokenCtrl', function($scope, $location, $http, Authenticate) {
-	$http.defaults.headers.common['Authorization'] = 'Bearer ' + $location.search().sub;
-	Authenticate.login({emailAddress: $location.search().email}).$promise.then(function (user) {
-		// this scope method is on the parent  ApplicationCtrl
-		$scope.setCurrentUser(user);
-	});
+.controller('AuthBearerCtrl', function($scope, $location, $http, UserStorage) {
+	$http.defaults.headers.common['Authorization'] = 'Bearer ' + $location.search().bearer;
+	$scope.setCurrentUser(UserStorage.retrieve($location.search().id));
 })
 .controller('UserCtrl', function($scope, $routeParams, $location, UserStorage, User) {
 	$scope.saveUser = function() {

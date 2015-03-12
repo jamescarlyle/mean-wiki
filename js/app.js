@@ -14,21 +14,17 @@ var app = angular.module('app', [
 // configure routes
 .config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 	$routeProvider.
-	when('/users/:emailAddress', {
-		templateUrl: 'views/user.html',
-		controller: 'UserCtrl'
-	}).
-	when('/authenticate/header', {
+	when('/auth/bearer', {
 		templateUrl: 'views/auth-result.html',
-		controller: 'AuthTokenCtrl'
+		controller: 'AuthBearerCtrl'
+	}).
+	when('/auth/form', {
+		templateUrl: 'views/authenticate.html',
+		controller: 'AuthenticateCtrl'
 	}).
 	when('/:schema/:name', {
 		templateUrl: function(params) { return 'views/' + params.schema + '-detail.html' },
 		controller: 'ItemDetailCtrl'
-	}).
-	when('/authenticate', {
-		templateUrl: 'views/authenticate.html',
-		controller: 'AuthenticateCtrl'
 	}).
 	when('/account', {
 		templateUrl: 'views/user.html',
