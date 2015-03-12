@@ -1,6 +1,8 @@
 var frisby = require('frisby');
+var SERVER_URL = process.env.SERVER_URL;
+
 frisby.create('PUT mean-wiki item')
-	.put('http://wiki-jwgc.rhcloud.com:80/wiki/users/54f1acedb12420d859f5da2c/items/54f6339cb72fca98a80fd0fb', {
+	.put(SERVER_URL + 'users/54f1acedb12420d859f5da2c/items/54f6339cb72fca98a80fd0fb', {
 		"content":"dummy",
 		"name":"#dummy"
 	}, 

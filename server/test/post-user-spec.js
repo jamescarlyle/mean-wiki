@@ -1,6 +1,8 @@
 var frisby = require('frisby');
+var SERVER_URL = process.env.SERVER_URL;
+
 frisby.create('POST duplicate mean-wiki user')
-	.post('http://wiki-jwgc.rhcloud.com:80/wiki/users/', {
+	.post(SERVER_URL + 'users/', {
 		"emailAddress":"dummy@spam.com",
 		"password":"abcd"
 	}, 
@@ -17,7 +19,7 @@ frisby.create('POST duplicate mean-wiki user')
 	})
 	.toss();
 frisby.create('POST different mean-wiki user')
-	.post('http://wiki-jwgc.rhcloud.com:80/wiki/users/', {
+	.post(SERVER_URL + 'users/', {
 		"emailAddress":"abcd@spam.com",
 		"password":"abcd"
 	}, 
@@ -32,7 +34,7 @@ frisby.create('POST different mean-wiki user')
 	})
 	.afterJSON(function(user) {
 		frisby.create('delete user just created in previous test')
-		.delete('http://wiki-jwgc.rhcloud.com:80/wiki/users/' + user.id)
+		.delete(SERVER_URL + 'users/' + user.id)
 		.addHeader('Authorization', 'Basic YWJjZEBzcGFtLmNvbTphYmNk')
 		.toss();
 	})

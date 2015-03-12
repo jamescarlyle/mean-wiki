@@ -4,8 +4,8 @@ var bcrypt = require('bcrypt-nodejs');
 var Schema  = mongoose.Schema;
 // item schema
 var UserSchema   = new Schema({
-	emailAddress: {type: String, unique: true, required: true},
-	password: {type: String, required: true},
+	emailAddress: { type: String, unique: true, required: true },
+	password: { type: String },
 	serverUpdate: { type: Date, default: Date.now }
 }, {
 	toJSON: {
@@ -26,20 +26,27 @@ UserSchema.methods.verifyPassword = function(password, callback) {
 	});
 };
 
+UserSchema.methods.generateBearer = function(callback) {
+	bcrypt.hash(process.env.GOOGLE_CLIENT_SECRET + this._id, null, null, function(err, hash) {
+		if (err) return callback(err, null);
+		callback(null, hash);
+	});
+};
+
 // Execute before each user.save() call
 UserSchema.pre('save', function(callback) {
-  var user = this;
-  // break out if the password hasn't changed
-  if (!user.isModified('password')) return callback();
-  // password changed so we need to hash it
-  bcrypt.genSalt(5, function(err, salt) {
-	if (err) return callback(err);
-	bcrypt.hash(user.password, salt, null, function(err, hash) {
-	  if (err) return callback(err);
-	  user.password = hash;
-	  callback();
+	var user = this;
+	// break out if the password hasn't changed
+	if (!user.isModified('password')) return callback();
+	// password changed so we need to hash it
+	bcrypt.genSalt(10, function(err, salt) {
+		if (err) return callback(err);
+		bcrypt.hash(user.password, salt, null, function(err, hash) {
+			if (err) return callback(err);
+			user.password = hash;
+			callback();
+		});
 	});
-  });
 });
 
 // exports module for use in Node

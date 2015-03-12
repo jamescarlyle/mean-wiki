@@ -1,6 +1,8 @@
 var frisby = require('frisby');
+var SERVER_URL = process.env.SERVER_URL;
+
 frisby.create('GET mean-wiki items')
-	.get('http://wiki-jwgc.rhcloud.com:80/wiki/users/54f1acedb12420d859f5da2c/items', 
+	.get(SERVER_URL + 'users/54f1acedb12420d859f5da2c/items', 
 		{ headers: { 
 			'Authorization': 'Basic ZHVtbXlAc3BhbS5jb206YWJjZA=='
 		} }
@@ -24,7 +26,7 @@ frisby.create('GET mean-wiki items')
 	.expectStatus(200)
 	.toss();
 frisby.create('GET single mean-wiki item')
-	.get('http://wiki-jwgc.rhcloud.com:80/wiki/users/54f1acedb12420d859f5da2c/items/54f6339cb72fca98a80fd0fb', 
+	.get(SERVER_URL + 'users/54f1acedb12420d859f5da2c/items/54f6339cb72fca98a80fd0fb', 
 		{ headers: { 
 			'Authorization': 'Basic ZHVtbXlAc3BhbS5jb206YWJjZA=='
 		} }

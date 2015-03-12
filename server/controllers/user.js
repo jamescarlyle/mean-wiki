@@ -41,7 +41,7 @@ exports.getUsers = function(req, res) {
 exports.putUser = function(req, res) {
 	console.log('http PUT for User called with ' + JSON.stringify(req.body));
 	// mongoose will automatically remove the id from the body in strict mode
-	User.findById(req.params.id, function(err, user) {
+	User.findById(req.params.user_id, function(err, user) {
 		// need to separate find and save, otherwise pre-save will not work (needed to hash password)
 		if (err) {
 			res.send(err);
@@ -61,8 +61,8 @@ exports.putUser = function(req, res) {
 
 // create endpoint for /users/123 for GET
 exports.getUser = function(req, res) {
-	console.log('http GET called for User resource ' + req.params.id);
-	User.findById(req.params.id, function(err, user) {
+	console.log('http GET called for User resource ' + req.params.user_id);
+	User.findById(req.params.user_id, function(err, user) {
 		if (err) {
 			res.send(err);
 		} else {
@@ -72,8 +72,8 @@ exports.getUser = function(req, res) {
 };
 // create endpoint for /users/123 for DELETE
 exports.deleteUser = function(req, res) {
-	console.log('http DELETE called for User resource ' + req.params.id);
-	User.findByIdAndRemove(req.params.id, function(err, user) {
+	console.log('http DELETE called for User resource ' + req.params.user_id);
+	User.findByIdAndRemove(req.params.user_id, function(err, user) {
 		if (err) {
 			res.send(err);
 		} else {

@@ -1,6 +1,8 @@
 var frisby = require('frisby');
+var SERVER_URL = process.env.SERVER_URL;
+
 frisby.create('DELETE undefined mean-wiki user')
-		.delete('http://wiki-jwgc.rhcloud.com:80/wiki/users/undefined')
+		.delete(SERVER_URL + 'users/undefined')
 		.addHeader('Authorization', 'Basic YWJjZEBzcGFtLmNvbTphYmNk')
 		.expectStatus(401)
 		.toss();

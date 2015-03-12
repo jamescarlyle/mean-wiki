@@ -37,7 +37,7 @@ app.all('/*', function(req, res, next) {
 });
 
 // strictly speaking :user and :schema is not needed in this route since item :id is globally unique by itself
-router.route('/users/:user/:schema/:id')
+router.route('/users/:user_id/:schema/:id')
 	.options(itemController.optionsItem)
 	// for put, can't appy req.body to already-found item before saving, and update doesn't call back with updated item
 	.put(authController.isAuthenticated, itemController.putItem)
@@ -49,8 +49,8 @@ router.route('/users/:user/:schema/:id')
 	.delete(itemController.deleteItem)
 ;
 
-// we need both :user and :schema here to filter by user and type
-router.route('/users/:user/:schema')
+// we need both :user_id and :schema here to filter by user and type
+router.route('/users/:user_id/:schema')
 	.options(itemController.optionsItem)
 	// all others, get the item for subsequent method processing
 	.all(authController.isAuthenticated, itemController.allItems)
@@ -59,7 +59,8 @@ router.route('/users/:user/:schema')
 	.post(itemController.postItem)
 ;
 
-router.route('/users/:id')
+router.route('/users/:user_id')
+	// TODO refactor this for all, then apply isAuthenticated to all only
 	.get(authController.isAuthenticated, userController.getUser)
 	.put(authController.isAuthenticated, userController.putUser)
 	.delete(authController.isAuthenticated, userController.deleteUser)
@@ -67,17 +68,12 @@ router.route('/users/:id')
 
 router.route('/users')
 	.post(userController.postUser)
-	//.get(authController.isAuthenticated, userController.getUsers);
 	.get(userController.getUsers)
 ;
 
 router.route('/authenticate/google')
 	.get(authController.google)
 ;
-
-// router.route('/authenticate/facebook')
-// 	.get(authController.facebook)
-// ;
 
 router.route('/authenticate/authCode')
 	.get(authController.authCode)

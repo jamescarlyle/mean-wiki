@@ -12,7 +12,7 @@
 	"author": {
 		"name": "James Carlyle",
 		"email": "jwgcarlyle@gmail.com",
-		"url": "http://www.akimoto.co/"
+		"url": "http://james.carlyle.space/"
 	},
 	"homepage": "http://jamescarlyle.github.io/mean-wiki/", 
 	"repository": {
@@ -30,7 +30,9 @@
 	,	"mongoose" 				: "latest"
 	,	"passport" 				: "latest"
 	,	"passport-http"			: "latest"
+	,	"passport-http-bearer"	: "latest"
 	,	"bcrypt-nodejs"			: "latest"
+	,	"mpromise"				: "latest"
 	},
 	"devDependencies": {},
 	"bundleDependencies": [],

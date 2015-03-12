@@ -1,6 +1,8 @@
 var frisby = require('frisby');
+var SERVER_URL = process.env.SERVER_URL;
+
 frisby.create('GET mean-wiki users')
-	.get('http://wiki-jwgc.rhcloud.com:80/wiki/users/')
+	.get(SERVER_URL + 'users/')
 	.expectStatus(200)
 	.expectHeaderContains('content-type', 'application/json')
 	.expectJSON('0', {
@@ -17,11 +19,11 @@ frisby.create('GET mean-wiki users')
 	})
 	.toss();
 frisby.create('GET mean-wiki user 54f1acedb12420d859f5da2c without authorisation')
-	.get('http://wiki-jwgc.rhcloud.com:80/wiki/users/54f1acedb12420d859f5da2c')
+	.get(SERVER_URL + 'users/54f1acedb12420d859f5da2c')
 	.expectStatus(401)
 	.toss();
 frisby.create('GET mean-wiki user 54f1acedb12420d859f5da2c with incorrect authorisation')
-	.get('http://wiki-jwgc.rhcloud.com:80/wiki/users/54f1acedb12420d859f5da2c', 
+	.get(SERVER_URL + 'users/54f1acedb12420d859f5da2c', 
 		{ headers: { 
 			'Authorization': 'Basic YWJjZEBzcGFtLmNvbTphYmNk',
 			'Content-Type': 'application/x-www-form-urlencoded'
@@ -30,7 +32,7 @@ frisby.create('GET mean-wiki user 54f1acedb12420d859f5da2c with incorrect author
 	.expectStatus(401)
 	.toss();
 frisby.create('GET mean-wiki user 54f1acedb12420d859f5da2c with correct authorisation')
-	.get('http://wiki-jwgc.rhcloud.com:80/wiki/users/54f1acedb12420d859f5da2c', 
+	.get(SERVER_URL + 'users/54f1acedb12420d859f5da2c', 
 		{ headers: { 
 			'Authorization': 'Basic ZHVtbXlAc3BhbS5jb206YWJjZA==',
 			'Content-Type': 'application/x-www-form-urlencoded'
